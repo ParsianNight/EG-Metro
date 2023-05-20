@@ -31,15 +31,7 @@ app.post("/api/v1/user", async function (req, res) {
     }
   });
   //  check price
-app.post("/api/v1/tickets/price/:originId/:destinationId", async function(req,res) {
-  const originId = req.params.originId
-  const destinationId = req.params.destinationId
-  console.log(originId)
-  console.log(parseInt(originId) + parseInt(destinationId))
-  return res.status(200)
 
-
-})
   // Register HTTP endpoint to create new user
   app.post("/api/v1/user/login", async function (req, res) {
     // get users credentials from the JSON body

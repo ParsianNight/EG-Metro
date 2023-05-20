@@ -33,6 +33,9 @@ const sessionToken = getSessionToken(req);
   return user;
 };
 
+
+
+
 module.exports = function (app) {
   // example
 app.get("/users", auth , async function (req, res) {
@@ -47,5 +50,14 @@ app.get("/users", auth , async function (req, res) {
     }
   });
 
+  app.post("/api/v1/tickets/price/:originId/:destinationId", async function(req,res) {
+    const originId = req.params.originId
+    const destinationId = req.params.destinationId
+    console.log(originId)
+    console.log(parseInt(originId) + parseInt(destinationId))
+    return res.status(200)
+  
+  
+  })
   
 };
