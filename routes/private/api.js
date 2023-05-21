@@ -7,19 +7,18 @@ const auth = require("../../middleware/auth");
 const getUser = async function (req) {
 const sessionToken = getSessionToken(req);
 
-
   const user = await db
     .select("*")
     .from("se_project.sessions")
     .where("token", sessionToken)
     .innerJoin(
       "se_project.users",
-      "se_project.sessions.userId",
+      "se_project.sessions.userid",
       "se_project.users.id"
     )
     .innerJoin(
       "se_project.roles",
-      "se_project.users.roleId",
+      "se_project.users.roleid",
       "se_project.roles.id"
     )
     .first();
