@@ -14,9 +14,9 @@ const getUser = async function(req) {
     .first();
   
   console.log('user =>', user)
-  user.isStudent = user.roleId === roles.student;
-  user.isAdmin = user.roleId === roles.admin;
-  user.isSenior = user.roleId === roles.senior;
+  user.isStudent = user.roleid === roles.student;
+  user.isAdmin = user.roleid === roles.admin;
+  user.isSenior = user.roleid === roles.senior;
 
   return user;  
 }
