@@ -53,17 +53,18 @@ app.post("/api/v1/refund/:ticketId" ,async function (req,res){
       .where("id", ticketId);
 
     const refundTicket = await db
-    .select("*")
-    .from("se_project.refund_requests")
-    .where("ticketid", ticketId);
+      .select("*")
+      .from("se_project.refund_requests")
+      .where("ticketid", ticketId);
 
+    if (!ticket) {
+      return res.status(404).json({ error: "Ticket Not Found" });
+    }
     if(refundTicket){
       return res.status(400).json({ error: 'Refund Still Being Reviewed' });
     }
      
-    if (!ticket) {
-      return res.status(404).json({ error: "Ticket Not Found" });
-    }
+    
 
     const user = await getUser(req);
     if (ticket.userid !== user.id) {
@@ -122,5 +123,40 @@ app.post("/requests/senior", async  (req,res) => {
 });
 
 
+app.put("/api/v1/ride/simulate ",async(req,ses)=>{
+  const {origin , destination , tripDate} = req.body;
+
+  if (!origin || !destination || !tripDate) {
+    return res.status(400).json({ error: "Missing required fields" });
+  }
+  const user = await getUser(req);
+  
+  try {
+    const rideExists = await db("se_project.rides")
+    .where({
+      userid: user.id,
+      origin: origin,
+      destination: destination,
+      tripdate : tripDate
+    });
+
+    if (rideExists) {
+      if (ride.status === "Completed") {
+        res.status(200).json({ message: "Ride has already been completed" });
+      } else {
+        await db("se_project.rides")
+          .where({ id: rideExists.id })
+          .update({ status: "Completed" });
+
+        return res.status(200).json({ message: "Ride simulated successfully" });
+      }
+    } else {
+      res.status(404).json({ message: "Ride not found" });
+    }
+  } catch (error) {
+    return res.status(500).json({ error: "Failed to simulate ride" });
+  } 
+
+});
   
 };
