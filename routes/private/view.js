@@ -5,7 +5,7 @@ const { getSessionToken } = require('../../utils/session');
 const getUser = async function(req) {
   const sessionToken = getSessionToken(req);
 
-
+  console.log(sessionToken)
   const user = await db.select('*')
     .from('se_project.sessions')
     .where('token', sessionToken)
@@ -36,10 +36,10 @@ module.exports = function(app) {
   });
 
   // Register HTTP endpoint to render /courses page
-  app.get('/stations', async function(req, res) {
+  app.get('/manage/stations', async function(req, res) {
     const user = await getUser(req);
     const stations = await db.select('*').from('se_project.stations');
-    return res.render('stations_example', { ...user, stations });
+    return res.render('stationsManageing', { ...user, stations });
   });
 
-};
+};  

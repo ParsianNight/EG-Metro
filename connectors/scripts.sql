@@ -1,17 +1,18 @@
--- DROP TABLE IF EXISTS se_project.users;
--- DROP TABLE IF EXISTS se_project.sessions;
--- DROP TABLE IF EXISTS se_project.roles;
--- DROP TABLE IF EXISTS se_project.rides;
--- DROP TABLE IF EXISTS se_project.transactions;
--- DROP TABLE IF EXISTS se_project.refund_requests;
--- DROP TABLE IF EXISTS se_project.senior_requests;
--- DROP TABLE IF EXISTS se_project.stations;
--- DROP TABLE IF EXISTS se_project.routes;
--- DROP TABLE IF EXISTS se_project.stationRoutes;
--- DROP TABLE IF EXISTS se_project.tickets;
--- DROP TABLE IF EXISTS se_project.subscription;
--- DROP TABLE IF EXISTS se_project.zones;
--- DROP SCHEMA IF EXISTS se_project CASCADE;
+DROP TABLE IF EXISTS se_project.users;
+DROP TABLE IF EXISTS se_project.sessions;
+DROP TABLE IF EXISTS se_project.roles;
+DROP TABLE IF EXISTS se_project.rides;
+DROP TABLE IF EXISTS se_project.transactions;
+DROP TABLE IF EXISTS se_project.refund_requests;
+DROP TABLE IF EXISTS se_project.senior_requests;
+DROP TABLE IF EXISTS se_project.stations;
+DROP TABLE IF EXISTS se_project.routes;
+DROP TABLE IF EXISTS se_project.stationRoutes;
+DROP TABLE IF EXISTS se_project.tickets;
+DROP TABLE IF EXISTS se_project.subscription;
+DROP TABLE IF EXISTS se_project.zones;
+DROP SCHEMA IF EXISTS se_project CASCADE;
+CREATE SCHEMA IF NOT EXISTS se_project;
 CREATE TABLE IF NOT EXISTS se_project.users
 (
     id SERIAL NOT NULL,
@@ -22,6 +23,7 @@ CREATE TABLE IF NOT EXISTS se_project.users
     roleid integer NOT NULL,
     CONSTRAINT users_pkey PRIMARY KEY (id)
 );
+
 CREATE TABLE IF NOT EXISTS se_project.sessions
 (
     id SERIAL NOT NULL,
