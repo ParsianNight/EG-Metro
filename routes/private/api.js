@@ -51,37 +51,72 @@ app.post("/api/v1/refund/:ticketId" ,async function (req,res){
       .select("*")
       .from("se_project.tickets")
       .where("id", ticketId);
+
+    const refundTicket = await db
+    .select("*")
+    .from("se_project.refund_requests")
+    .where("ticketid", ticketId);
+
+    if(refundTicket){
+      return res.status(400).json({ error: 'Refund Still Being Reviewed' });
+    }
      
-      if (!ticket) {
-        return res.status(404).json({ error: "Ticket not found" });
-      }
+    if (!ticket) {
+      return res.status(404).json({ error: "Ticket Not Found" });
+    }
 
-      const user = await getUser(req);
-      if (ticket.userid !== user.id) {
-        return res.status(403).json({ error: "Unauthorized to refund this ticket" });
-      }
+    const user = await getUser(req);
+    if (ticket.userid !== user.id) {
+      return res.status(403).json({ error: "Unauthorized to refund this ticket" });
+    }
 
-      const currDate = new Date();
-      const ticketDate = new Date(ticket.tripdate);
+    const currDate = new Date();
+    const ticketDate = new Date(ticket.tripdate);
 
-      if (ticketDate >= currDate){
-        return res.status(400).json({ error: "Cannot refund past or current date tickets" });
-      };
+    if (ticketDate >= currDate){
+      return res.status(400).json({ error: "Cannot refund past or current date tickets" });
+    };
 
      
-      const refundRequest = {
-        status: "pending",
-        userid: user.id,
-        refundamount: ticket.price,
-        ticketid: ticketId,
-      };
-      await db("se_project.refund_requests").insert(refundRequest);
-      return res.status(200).json({ message: "Ticket Is Added To Refund List." });
+    const refundRequest = {
+      status: "pending",
+      userid: user.id,
+      refundamount: ticket.price,
+      ticketid: ticketId,
+    };
+    await db("se_project.refund_requests").insert(refundRequest);
+    return res.status(200).json({ message: "Ticket Is Added To Refund List." });
 
 
   } catch (error) {
-     res.status(500).json({ error: 'Failed to submit refund request' });
+    return res.status(400).json({ error: 'Failed to submit refund request' });
 
+  }
+
+});
+app.post("/requests/senior", async  (req,res) => {
+  
+  const {nationalId} = req.body;
+  const user = await getUser(req);
+  const result = await db.select("*").from("se_project.senior_requests").where("nationalId", nationalId);
+  if (result) {
+    return res.status(400).json({ error: 'Request Already Submitted' });
+  }
+  
+  try {
+
+      const seniorrequests = {
+        status: "pending",
+        userid: user.id,
+        nationalid:nationalId 
+     
+      };
+      await db("se_project.senior_requests").insert(seniorrequests);
+      return res.status(200).json({ message: "Request Submitted." });
+    
+    
+  } catch (error) {
+    return res.status(400).json({ error: 'Failed To Submit Request' });
   }
 
 });
