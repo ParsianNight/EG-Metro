@@ -9,48 +9,127 @@
   </head>
   <body>
     <div>
-    <div>
-    <nav class="navbar navbar-inverse" style="padding-left:130px;">
-      <ul class="nav navbar-nav">
-        <li><a href="/dashboard">Home</a></li>
-        <li class="active"><a href="/stations_example">stations</a></li>
-        <li><a href="/users">Users</a></li>
-        <li><a href="/users/add">Add Users</a></li>
-        <li><a href="/">Logout</a></li>       
-      </ul>
-  </nav>
-  </div>
-    <br/>
-      {{#isAdmin}}
-      <div style="position:absolute; right:0;">
-        <input id="btnAddStation" type="button" value="Add station" class="btn btn-primary">
-        <br />
+      <div>
+        <nav class="navbar navbar-inverse" style="padding-left:130px;">
+          <ul class="nav navbar-nav">
+            <li><a href="/dashboard">Home</a></li>
+            <li class="active"><a href="/stations_example">stations</a></li>
+            <li><a href="/users">Users</a></li>
+            <li><a href="/users/add">Add Users</a></li>
+            <li><a href="/">Logout</a></li>       
+          </ul>
+        </nav>
       </div>
-      {{/isAdmin}}
+      <br/>
+     
       <table class="table">
-        <thead>
-          <tr>
-            <th scope="col">id</th>
-            <th scope="col">Name</th>
-            <th scope="col">code</th>
-            <th scope="col">Type</th>
-            <th scope="col">Position</th>
-            <th scope="col">status</th>
-
-
-
-          </tr>
-          {{#stations}}
-            <tr>
-              <td>{{id}}</td>
-              <td>{{stationName}}</td>
-              <td>{{stationType}}</td>
-              <td>{{stationPosition}}</td>
-              <td>{{stationStatus}}</td>
-            </tr> 
-          {{/stations}}
+  <thead>
+    <tr>
+      <th scope="col">id</th>
+      <th scope="col">Name</th>
+      <th scope="col">Type</th>
+      <th scope="col">Position</th>
+      <th scope="col">status</th>
+      <th scope="col">Actions</th> <!-- Added column for actions -->
+    </tr>
+  </thead>
+  <tbody>
+    {{#stations}}
+      <tr>
+        <td>{{id}}</td>
+        <td>{{stationname}}</td>
+        <td>{{stationtype}}</td>
+        <td>{{stationposition}}</td>
+        <td>{{stationstatus}}</td>
+        <td>
+          <button class="btn btn-danger btnDeleteStation" data-station-id="{{id}}">Delete</button>
+        </td>
+      </tr> 
+    {{/stations}}
+  </tbody>
+</table>
         </thead>
       </table>
     </div>
+     {{#isAdmin}}
+      <div style="position:center; ">
+        <button id="btnAddStation" class="btn btn-primary" style="position:center; ">Add station</button>
+        <br />
+        <div id="addStationForm" style="display: none;">
+          <label for="stationName">Station Name:</label>
+          <input type="text" id="stationName" name="stationName" class="form-control" />
+          <br />
+          <label for="stationType">Station Type:</label>
+          <select id="stationType" name="stationType" class="form-control">
+          <option value="0">Normal</option>
+          <option value="1">Transfer</option>
+          </select>
+          <br />
+          <label for="stationStatus">Station Status:</label>
+          <input type="text" id="stationStatus" name="stationStatus" class="form-control" />
+          <br />
+          <button id="btnSaveStation" class="btn btn-primary">Save</button>
+          <button id="btnCancel" class="btn btn-default">Cancel</button>
+        </div>
+      </div>
+      {{/isAdmin}}
+    <script>
+      $(document).ready(function() {
+        $("#btnAddStation").click(function() {
+          $("#addStationForm").toggle();
+        });
+
+        $("#btnSaveStation").click(function() {
+          const stationName = $("#stationName").val();
+          const stationType = $("#stationType").val();
+          const stationPosition = $("#stationPosition").val();
+          const stationStatus = $("#stationStatus").val();
+
+          // Perform an AJAX request to save the new station data
+          $.ajax({
+            url: "/api/v1/station",
+            type: "POST",
+            data: {
+              stationName: stationName,
+              stationType: stationType,
+              stationPosition: stationPosition,
+              stationStatus: stationStatus
+            },
+            success: function(response) {
+              // Handle success response
+              location.reload()
+              console.log(response);
+            },
+            error: function(error) {
+              // Handle error response
+              console.log(error);
+            }
+          });
+        });
+      });
+
+      $(document).ready(function() {
+  // Add event listener for delete buttons
+  $(document).on("click", ".btnDeleteStation", function() {
+    var stationId = $(this).data("station-id");
+
+    // Perform an AJAX request to delete the station
+    $.ajax({
+      url: "/api/v1/station/" + stationId,
+      type: "DELETE",
+      success: function(response) {
+        // Handle success response
+        alert(response);
+        location.reload()
+
+      },
+      error: function(error) {
+        // Handle error response
+        console.log(error);
+      }
+    });
+  });
+});
+    </script>
   </body>
-  </html>
+</html>
