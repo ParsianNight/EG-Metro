@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Courses</title>
+    <title>EG-Metro</title>
     <link rel='stylesheet' href='/styles/bootstrap.min.css' />
     <link rel='stylesheet' href='/styles/style.css' />
     <script src="/js/jquery-2.2.0.min.js" type="text/javascript"></script>
@@ -13,7 +13,7 @@
         <nav class="navbar navbar-inverse" style="padding-left:130px;">
           <ul class="nav navbar-nav">
             <li><a href="/dashboard">Home</a></li>
-            <li class="active"><a href="/stations_example">stations</a></li>
+            <li class="active"><a href="/manage/stations">stations</a></li>
             <li><a href="/users">Users</a></li>
             <li><a href="/users/add">Add Users</a></li>
             <li><a href="/">Logout</a></li>       
@@ -35,16 +35,33 @@
   </thead>
   <tbody>
     {{#stations}}
-      <tr>
-        <td>{{id}}</td>
-        <td>{{stationname}}</td>
-        <td>{{stationtype}}</td>
-        <td>{{stationposition}}</td>
-        <td>{{stationstatus}}</td>
-        <td>
-          <button class="btn btn-danger btnDeleteStation" data-station-id="{{id}}">Delete</button>
-        </td>
-      </tr> 
+            <tr>
+              <td>{{id}}</td>
+              <td>
+                <span class="station-name">{{stationname}}</span>
+                <input type="text" class="form-control station-name-input" value="{{stationname}}" style="display: none;">
+              </td>
+              <td>
+                <span class="station-type">{{stationtype}}</span>
+                 <select id="stationType" name="stationType" class="station-type-input" style="display: none;">
+                <option value="0">Normal</option>
+                <option value="1">Transfer</option>
+                </select>
+              </td>
+              <td>
+                <span class="station-position">{{stationposition}}</span>
+              </td>
+              <td>
+                <span class="station-status">{{stationstatus}}</span>
+                <input type="text" class="form-control station-status-input" value="{{stationstatus}}" style="display: none;">
+              </td>
+              <td>
+                <button class="btn btn-danger btnDeleteStation" data-station-id="{{id}}">Delete</button>
+                <button class="btn btn-primary btnModifyStation" data-station-id="{{id}}">Modify</button>
+                <button class="btn btn-success btnSaveStation" data-station-id="{{id}}" style="display: none;">Save</button>
+                <button class="btn btn-secondary btnCancelEdit" data-station-id="{{id}}" style="display: none;">Cancel</button>
+              </td>
+            </tr> 
     {{/stations}}
   </tbody>
 </table>
@@ -79,10 +96,13 @@
           $("#addStationForm").toggle();
         });
 
+        $("#btnCancel").click(function() {
+          $("#addStationForm").toggle();
+        });
+
         $("#btnSaveStation").click(function() {
           const stationName = $("#stationName").val();
           const stationType = $("#stationType").val();
-          const stationPosition = $("#stationPosition").val();
           const stationStatus = $("#stationStatus").val();
 
           // Perform an AJAX request to save the new station data
@@ -92,7 +112,6 @@
             data: {
               stationName: stationName,
               stationType: stationType,
-              stationPosition: stationPosition,
               stationStatus: stationStatus
             },
             success: function(response) {
@@ -130,6 +149,97 @@
     });
   });
 });
+    $(document).ready(function() {
+        // Add event listener for modify buttons
+        $(document).on("click", ".btnModifyStation", function() {
+          var stationId = $(this).data("station-id");
+          var stationRow = $(this).closest("tr");
+    
+          // Toggle display of station fields and input boxes
+          stationRow.find(".station-name").toggle();
+          stationRow.find(".station-name-input").toggle();
+          stationRow.find(".station-type").toggle();
+          stationRow.find(".station-type-input").toggle();
+          stationRow.find(".station-position").toggle();
+          stationRow.find(".station-status").toggle();
+          stationRow.find(".station-status-input").toggle();
+    
+          // Toggle display of buttons
+          stationRow.find(".btnModifyStation").toggle();
+          stationRow.find(".btnSaveStation").toggle();
+          stationRow.find(".btnCancelEdit").toggle();
+        });
+    
+        // Add event listener for cancel buttons
+        $(document).on("click", ".btnCancelEdit", function() {
+          var stationRow = $(this).closest("tr");
+    
+          // Toggle display of station fields and input boxes
+          stationRow.find(".station-name-input").hide();
+          stationRow.find(".station-name").show();
+          stationRow.find(".station-type-input").hide();
+          stationRow.find(".station-type").show();
+          stationRow.find(".station-position").show();
+          stationRow.find(".station-status-input").hide();
+          stationRow.find(".station-status").show();
+    
+          // Toggle display of buttons
+          stationRow.find(".btnModifyStation").show();
+          stationRow.find(".btnSaveStation").hide();
+          stationRow.find(".btnCancelEdit").hide();
+        });
+    
+        // Add event listener for save buttons
+        $(document).on("click", ".btnSaveStation", function() {
+          var stationId = $(this).data("station-id");
+          var stationRow = $(this).closest("tr");
+          var stationName = stationRow.find(".station-name-input").val();
+          var stationType = stationRow.find(".station-type-input").val();
+          var stationStatus = stationRow.find(".station-status-input").val();
+    
+          // Perform an AJAX request to update the station
+          $.ajax({
+            url: "/api/v1/station/" + stationId,
+            type: "PUT",
+            data: JSON.stringify({ 
+              stationName: stationName,
+              stationType: stationType,
+              stationStatus: stationStatus
+            }),
+            contentType: "application/json",
+            success: function(response) {
+              // Handle success response
+              console.log(response);
+              if(stationType == 0)
+                stationType = "normal"
+              else if (stationType == 1)
+                stationType = "transfer"
+              // Update the station fields in the UI
+              stationRow.find(".station-name").text(stationName);
+              stationRow.find(".station-type").text(stationType);
+              stationRow.find(".station-status").text(stationStatus);
+    
+              // Toggle display of station fields and input boxes
+              stationRow.find(".station-name-input").hide();
+              stationRow.find(".station-name").show();
+              stationRow.find(".station-type-input").hide();
+              stationRow.find(".station-type").show();
+              stationRow.find(".station-position").show();
+              stationRow.find(".station-status-input").hide();
+              stationRow.find(".station-status").show();
+    
+              // Toggle display of buttons
+              stationRow.find(".btnModifyStation").show();
+              stationRow.find(".btnSaveStation").hide();
+              stationRow.find(".btnCancelEdit").hide();
+            },
+            error: function(xhr, textStatus, errorThrown) {
+              // Handle error response
+              console.log(xhr.responseText);
+            }
+          });
+        });
+    });
     </script>
   </body>
 </html>
