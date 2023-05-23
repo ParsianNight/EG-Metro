@@ -4,6 +4,7 @@ const db = require("../../connectors/db");
 const roles = require("../../constants/roles");
 const {getSessionToken}=require('../../utils/session');
 const auth = require("../../middleware/auth");
+const session = require("../../utils/session");
 const getUser = async function (req) {
 const sessionToken = getSessionToken(req);
 
@@ -46,21 +47,37 @@ app.get("/users", auth , async function (req, res) {
 app.post("/api/v1/refund/:ticketId" ,async function (req,res){
   try {
     const { ticketId } = req.params;
+    console.log(ticketId)
+    // const s ={
+    //   subtype="annual"
+    // }
+
+    // const t={
+  
+    //   origin: "1",
+    //   destination: "5",
+    //   userid: 2,
+
+    //   tripdate:
+      
+    // }
+    // await db("se_project.tickets").insert(t);
 
     const ticket = await db
       .select("*")
       .from("se_project.tickets")
       .where("id", ticketId);
+      console.log("ticket",ticket)
 
     const refundTicket = await db
       .select("*")
       .from("se_project.refund_requests")
       .where("ticketid", ticketId);
-
-    if (!ticket) {
+    console.log("refundTicket",refundTicket)
+    if (ticket.length==0) {
       return res.status(404).json({ error: "Ticket Not Found" });
     }
-    if(refundTicket){
+    if(refundTicket.length>0){
       return res.status(400).json({ error: 'Refund Still Being Reviewed' });
     }
      
@@ -82,7 +99,7 @@ app.post("/api/v1/refund/:ticketId" ,async function (req,res){
     const refundRequest = {
       status: "pending",
       userid: user.id,
-      refundamount: ticket.price,
+      refundamount: 5,
       ticketid: ticketId,
     };
     await db("se_project.refund_requests").insert(refundRequest);
@@ -95,20 +112,19 @@ app.post("/api/v1/refund/:ticketId" ,async function (req,res){
   }
 
 });
-app.post("/requests/senior", async  (req,res) => {
-  
+//DONE
+app.post("/api/v1/senior/request", async function (req,res)  {
+  console.log("dfghn");
   const {nationalId} = req.body;
+  console.log(nationalId);
   const user = await getUser(req);
-  const result = await db.select("*").from("se_project.senior_requests").where("nationalId", nationalId);
-  if (result) {
-    return res.status(400).json({ error: 'Request Already Submitted' });
-  }
+ 
   
   try {
 
       const seniorrequests = {
         status: "pending",
-        userid: user.id,
+        userid: user.userid,
         nationalid:nationalId 
      
       };
@@ -123,25 +139,25 @@ app.post("/requests/senior", async  (req,res) => {
 });
 
 
-app.put("/api/v1/ride/simulate ",async(req,ses)=>{
+app.put("/api/v1/ride/simulate",async(req,res)=>{
+  console.log("sdfgh");
   const {origin , destination , tripDate} = req.body;
-
   if (!origin || !destination || !tripDate) {
     return res.status(400).json({ error: "Missing required fields" });
   }
   const user = await getUser(req);
   
   try {
-    const rideExists = await db("se_project.rides")
+    const rideExists = await db.select("status").from("se_project.rides")
     .where({
       userid: user.id,
       origin: origin,
       destination: destination,
       tripdate : tripDate
     });
-
-    if (rideExists) {
-      if (ride.status === "Completed") {
+    console.log(rideExists)
+    if (rideExists.length>0) {
+      if (rideExists === "Completed") {
         res.status(200).json({ message: "Ride has already been completed" });
       } else {
         await db("se_project.rides")
@@ -158,5 +174,12 @@ app.put("/api/v1/ride/simulate ",async(req,ses)=>{
   } 
 
 });
-  
-};
+
+
+/*
+//index
+  const startIndex = stations.findIndex(station => station.id === originId);
+  const endIndex = stations.findIndex(station => station.id === destinationId);
+*/
+
+}

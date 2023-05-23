@@ -46,4 +46,8 @@ module.exports = function(app) {
 
   });
   
+  app.get('/requests/refund', function(req, res) {
+    res.render('refund');
+  });
+  
 };
