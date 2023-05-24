@@ -89,5 +89,29 @@ module.exports = function (app) {
       
   }});
 
+// get Zones
+  app.get('/api/v1/zones',async (req,res) => {
+   try {
+    
+    const db1=
+    await db("se_project.zones") 
+    .select("*")
+    
+      console.log(db1)
+      console.log("test")
+      return res.status(200).json({message: "Zones Data are shown successfully"})
+      
+    
+
+   } catch (err) 
+    {
+      
+      console.error(err.message);
+      return res.status(300).json({ error: 'could not retunr zones' });
+   }
+    
+
+
+  })
 
 };
