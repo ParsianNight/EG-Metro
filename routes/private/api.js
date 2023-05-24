@@ -24,7 +24,7 @@ const sessionToken = getSessionToken(req);
     )
     .first();
 
-  console.log("user =>", user);
+ // console.log("user =>", user);
   user.isNormal = user.roleId === roles.user;
   user.isAdmin = user.roleId === roles.admin;
   user.isSenior = user.roleId === roles.senior;
@@ -113,19 +113,7 @@ app.get("/users", auth , async function (req, res) {
   
   }
 
-  app.post("/api/v1/payment/ticket", auth , async function (req, res) {
-    try {
-     
-
-      
-    } catch (e) {
-      console.log(e.message);
-
-      
-    }
-
-
-  });  
+ 
 
   app.post("/api/v1/tickets/price/:originId:destinationId",async function (req, res)  { 
    // const user = await getUser(req)
@@ -164,6 +152,143 @@ app.get("/users", auth , async function (req, res) {
    return res.status(400).send("Could not get price");
 }
   });
+
+
+
+  app.post("/api/v1/payment/subscription", auth , async function (req, res) {
+    const {purchasedId,creditCardNumber,holderName,payedAmount,subType,zoneId }= req.body;
+    console.log(purchasedId,creditCardNumber,holderName,payedAmount,subType,zoneId );
+
+    try {
+
+      const user = await getUser(req);
+      const user_id=user.userid;
+      const sub = await db.select("*").from("se_project.subsription").where("userid",user_id)
+      if(sub.length!=0){
+       
+ 
+   
+ 
+ 
+      const tran={
+       amount:payedAmount ,
+       userid:user_id ,
+       purchasediid:purchasedId
+     };
+     console.log("tran",tran)
+      await db("se_project.transactions").insert(tran);
+ 
+      const tic = {
+       origin:origin,
+       destination:destination,
+       userid:user_id,
+       tripdate:tripDate,
+       //subiD:null
+      };
+      console.log("tic",tic)
+ 
+      await db("se_project.tickets").insert(tic);
+    
+ 
+      const t_id = await db.select("id").from("se_project.tickets").where("origin",origin).andWhere("destination", destination)
+      .andWhere("userid",user_id).andWhere("tripdate",tripDate).then((rows) => rows.map((row) => row.id));
+ 
+       console.log(t_id);
+      
+ 
+      const r ={
+       status:"upcoming",
+       origin:origin,
+       destination:destination,
+       userid:user_id,
+       tripdate:tripDate,
+       ticketid:t_id[0]
+     };
+     console.log("r",r); 
+     await db("se_project.rides").insert(r);
+     return res.status(200).json({message: "ride added"}) ;     
+ 
+   }
+   else
+     return res.status(400).json({error: "you Donot have a subsription "}) ;     
+     } catch (e) {
+       console.log(e.message);
+ 
+       
+     }
+ 
+
+
+});
+
+
+  app.post("/api/v1/payment/ticket", auth , async function (req, res) {
+    const {purchasedId,creditCardNumber,holderName,payedAmount,origin,destination,tripDate }= req.body;
+    console.log(purchasedId,creditCardNumber,holderName,payedAmount,origin,destination,tripDate )
+    try {
+
+     const user = await getUser(req);
+     const user_id=user.userid;
+     const sub = await db.select("*").from("se_project.subsription").where("userid",user_id)
+     if(sub.length==0){
+      
+
+  
+
+
+     const tran={
+      amount:payedAmount ,
+      userid:user_id ,
+      purchasediid:purchasedId
+    };
+    console.log("tran",tran)
+     await db("se_project.transactions").insert(tran);
+
+     const tic = {
+      origin:origin,
+      destination:destination,
+      userid:user_id,
+      tripdate:tripDate,
+      //subiD:null
+     };
+     console.log("tic",tic)
+
+     await db("se_project.tickets").insert(tic);
+   
+
+     const t_id = await db.select("id").from("se_project.tickets").where("origin",origin).andWhere("destination", destination)
+     .andWhere("userid",user_id).andWhere("tripdate",tripDate).then((rows) => rows.map((row) => row.id));
+
+      console.log(t_id);
+     
+
+     const r ={
+      status:"upcoming",
+      origin:origin,
+      destination:destination,
+      userid:user_id,
+      tripdate:tripDate,
+      ticketid:t_id[0]
+    };
+    console.log("r",r); 
+    await db("se_project.rides").insert(r);
+    return res.status(200).json({message: "ride added"}) ;     
+
+  }
+  else
+    return res.status(400).json({error: "you have a subsription so you canot pay online"}) ;     
+    } catch (e) {
+      console.log(e.message);
+
+      
+    }
+
+
+  });  
+
+
+
+
   
 
 };
