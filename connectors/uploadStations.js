@@ -79,6 +79,7 @@ async function uploadS() {
   for (let i = 0; i < stations.length; i++) {
     const element =stations[i];
     await db("se_project.stations").insert(element).returning("*");
+    console.log(element);
   }
 }
 async function uploadR() {
@@ -102,6 +103,7 @@ async function uploadR() {
     await db("se_project.routes").insert(element).returning("*");
   }
 }
-//uploadS(); first to run
-//uploadR(); second
-//uploadSR(); third
+console.log("sdfgn")
+//uploadS();// first to run
+//uploadR();// second
+//uploadSR(); //third

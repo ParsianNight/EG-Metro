@@ -24,7 +24,7 @@ const sessionToken = getSessionToken(req);
     )
     .first();
 
-  console.log("user =>", user);
+ // console.log("user =>", user);
   user.isNormal = user.roleId === roles.user;
   user.isAdmin = user.roleId === roles.admin;
   user.isSenior = user.roleId === roles.senior;
@@ -44,36 +44,20 @@ app.get("/users", auth , async function (req, res) {
       return res.status(400).send("Could not get users");
     }
   });
+  //DONE
 app.post("/api/v1/refund/:ticketId" ,async function (req,res){
   try {
     const { ticketId } = req.params;
-    console.log(ticketId)
-    // const s ={
-    //   subtype="annual"
-    // }
-
-    // const t={
-  
-    //   origin: "1",
-    //   destination: "5",
-    //   userid: 2,
-
-    //   tripdate:
-      
-    // }
-    // await db("se_project.tickets").insert(t);
 
     const ticket = await db
       .select("*")
       .from("se_project.tickets")
       .where("id", ticketId);
-      console.log("ticket",ticket)
 
     const refundTicket = await db
       .select("*")
       .from("se_project.refund_requests")
       .where("ticketid", ticketId);
-    console.log("refundTicket",refundTicket)
     if (ticket.length==0) {
       return res.status(404).json({ error: "Ticket Not Found" });
     }
@@ -83,11 +67,10 @@ app.post("/api/v1/refund/:ticketId" ,async function (req,res){
      
     
 
-    const user = await getUser(req);
-    if (ticket.userid !== user.id) {
-      return res.status(403).json({ error: "Unauthorized to refund this ticket" });
-    }
-
+     const user = await getUser(req);
+    // if (ticket.userid !== user.id) {
+    //   return res.status(403).json({ error: "Unauthorized to refund this ticket" });
+    // }
     const currDate = new Date();
     const ticketDate = new Date(ticket.tripdate);
 
@@ -95,14 +78,15 @@ app.post("/api/v1/refund/:ticketId" ,async function (req,res){
       return res.status(400).json({ error: "Cannot refund past or current date tickets" });
     };
 
-     
     const refundRequest = {
       status: "pending",
-      userid: user.id,
-      refundamount: 5,
+      userid: user.userid,
+      refundamount: "2",
       ticketid: ticketId,
     };
+
     await db("se_project.refund_requests").insert(refundRequest);
+
     return res.status(200).json({ message: "Ticket Is Added To Refund List." });
 
 
@@ -138,9 +122,9 @@ app.post("/api/v1/senior/request", async function (req,res)  {
 
 });
 
-
+//waiting for donia q
 app.put("/api/v1/ride/simulate",async(req,res)=>{
-  console.log("sdfgh");
+  console.log("sdfgh"); 
   const {origin , destination , tripDate} = req.body;
   if (!origin || !destination || !tripDate) {
     return res.status(400).json({ error: "Missing required fields" });
@@ -154,14 +138,24 @@ app.put("/api/v1/ride/simulate",async(req,res)=>{
       origin: origin,
       destination: destination,
       tripdate : tripDate
-    });
+    }).then((rows) => rows.map((row) => row.status));
+
+    const id = await db.select("id").from("se_project.rides")
+    .where({
+      userid: user.id,
+      origin: origin,
+      destination: destination,
+      tripdate : tripDate
+    }).then((rows) => rows.map((row) => row.id));
     console.log(rideExists)
+    console.log(id)
+
     if (rideExists.length>0) {
-      if (rideExists === "Completed") {
+      if (rideExists[0] === "Completed") {
         res.status(200).json({ message: "Ride has already been completed" });
       } else {
         await db("se_project.rides")
-          .where({ id: rideExists.id })
+          .where({ "id": id[0] })
           .update({ status: "Completed" });
 
         return res.status(200).json({ message: "Ride simulated successfully" });
