@@ -1,11 +1,11 @@
 const db = require('../../connectors/db');
 const roles = require('../../constants/roles');
 const { getSessionToken } = require('../../utils/session');
-
+// TODO -> create a navbar for admins and one for users
 const getUser = async function(req) {
   const sessionToken = getSessionToken(req);
 
-
+  //console.log(sessionToken)
   const user = await db.select('*')
     .from('se_project.sessions')
     .where('token', sessionToken)
@@ -35,11 +35,17 @@ module.exports = function(app) {
     return res.render('users', { users });
   });
 
-  // Register HTTP endpoint to render /courses page
-  app.get('/stations', async function(req, res) {
+  // Register HTTP endpoint to render routesManageing page
+  app.get('/manage/stations', async function(req, res) {
     const user = await getUser(req);
     const stations = await db.select('*').from('se_project.stations');
-    return res.render('stations_example', { ...user, stations });
+    return res.render('stationsManageing', { ...user, stations });
   });
 
-};
+  app.get('/manage/routes', async function(req, res) {
+    const user = await getUser(req);
+    const routes = await db.select('*').from('se_project.routes');
+    return res.render('routesManageing', { ...user, routes });
+  });
+
+};  
