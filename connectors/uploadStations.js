@@ -109,8 +109,9 @@ async function uploadR() {
 
   }
 }
-console.log("wqerfgqWERT") //first to run
-//uploadS();
-console.log("wqerfgqWERT") //first to run
-//uploadR(); //second
-uploadSR(); //third
+
+
+//uploadS(); 
+//uploadR(); 
+//uploadSR(); 
+
