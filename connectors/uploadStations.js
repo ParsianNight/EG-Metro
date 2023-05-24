@@ -26,7 +26,11 @@ async function uploadSR() {
   ];
   for (let i = 0; i < SR.length; i++) {
     const element =SR[i];
+    console.log(element)
+
     await db("se_project.stationroutes").insert(element).returning("*");
+    console.log(element)
+
   }
 
 }
@@ -79,6 +83,8 @@ async function uploadS() {
   for (let i = 0; i < stations.length; i++) {
     const element =stations[i];
     await db("se_project.stations").insert(element).returning("*");
+
+
   }
 }
 async function uploadR() {
@@ -100,8 +106,12 @@ async function uploadR() {
   for (let i = 0; i < routes.length; i++) {
     const element =routes[i];
     await db("se_project.routes").insert(element).returning("*");
+
   }
 }
+
+
 //uploadS(); 
 //uploadR(); 
 //uploadSR(); 
+
