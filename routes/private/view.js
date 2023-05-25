@@ -43,8 +43,10 @@ module.exports = function(app) {
   });
 
   app.get("/requests/refund" , async (req,res) =>{
-    
-    return res.render('refund_requests');
+    const user = await getUser(req);
+    const tickets = await db.select('*').from('se_project.tickets').where("userid", user.userid);
+    //console.log("ticket",tickets);
+    return res.render('refund_requests' ,  { ...user, tickets });
   });
 
   app.get("/requests/senior", (req, res) => {
