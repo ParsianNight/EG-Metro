@@ -1,0 +1,75 @@
+<!-- senior_request.hjs -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Senior Request</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 20px;
+      }
+      .container {
+        max-width: 500px;
+        margin: 0 auto;
+        background-color: #fff;
+        border-radius: 5px;
+        padding: 20px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        text-align: center;
+      }
+      form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      label {
+        margin-bottom: 10px;
+      }
+      input {
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+      button {
+        padding: 10px 20px;
+        background-color: #4caf50;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #45a049;
+      }
+      .message {
+        text-align: center;
+        padding: 10px;
+        background-color: #4caf50;
+        color: #fff;
+        margin-top: 10px;
+      }
+    </style>
+    <script>
+      function showMessage(message) {
+        const messageElement = document.getElementById("message");
+        messageElement.textContent = message;
+        messageElement.style.display = "block";
+      }
+    </script>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Senior Request</h1>
+      <form action="/api/v1/senior/request" method="POST">
+        <label for="nationalId">National ID:</label>
+        <input type="text" id="nationalId" name="nationalId" required>
+        <button type="submit" onclick="showMessage('Request Submitted.')">Submit Request</button>
+      </form>
+      <p id="message" class="message"></p>
+    </div>
+  </body>
+</html>

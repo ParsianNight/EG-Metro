@@ -41,13 +41,14 @@ module.exports = function(app) {
     const stations = await db.select('*').from('se_project.stations');
     return res.render('stations_example', { ...user, stations });
   });
-  app.get('/requests/refund' , async function(req,res){
-    
 
+  app.get("/requests/refund" , async (req,res) =>{
+    
+    return res.render('refund_requests');
   });
-  
-  app.get('/requests/refund', function(req, res) {
-    res.render('refund');
+
+  app.get("/requests/senior", (req, res) => {
+    res.render("Senior_Request");
   });
-  
+ 
 };

@@ -77,7 +77,7 @@ app.post("/api/v1/refund/:ticketId" ,async function (req,res){
     if (ticketDate >= currDate){
       return res.status(400).json({ error: "Cannot refund past or current date tickets" });
     };
-
+    //refundamount m3rfsh gaya mnen
     const refundRequest = {
       status: "pending",
       userid: user.userid,
@@ -96,15 +96,21 @@ app.post("/api/v1/refund/:ticketId" ,async function (req,res){
   }
 
 });
+
 //DONE
 app.post("/api/v1/senior/request", async function (req,res)  {
-  console.log("dfghn");
+  //console.log("dfghn");
   const {nationalId} = req.body;
   console.log(nationalId);
   const user = await getUser(req);
- 
-  
+
+  const requests_Exists = await db.select("status").from("se_project.senior_requests")
+  .where("userid",user.userid).then((rows) => rows.map((row) => row.status));;
+  console.log("vwwcw",requests_Exists);
   try {
+    if(requests_Exists == "pending"){
+      return res.status(400).json({ error: 'Already Requsted ' }); 
+    }
 
       const seniorrequests = {
         status: "pending",
@@ -170,8 +176,7 @@ app.put("/api/v1/ride/simulate",async(req,res)=>{
 });
 
 
-/*
-//index
+/*//index
   const startIndex = stations.findIndex(station => station.id === originId);
   const endIndex = stations.findIndex(station => station.id === destinationId);
 */
