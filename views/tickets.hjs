@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Buy Ticket</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+      }
+      h1 {
+        text-align: center;
+      }
+      form {
+        width: 400px;
+        margin: 0 auto;
+      }
+      label {
+        display: block;
+        margin-top: 10px;
+      }
+      input[type="text"],
+      input[type="date"],
+      input[type="submit"] {
+        width: 100%;
+        padding: 5px;
+        margin-top: 5px;
+      }
+      input[type="submit"] {
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        cursor: pointer;
+      }
+      input[type="submit"]:hover {
+        background-color: #45a049;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Buy Ticket</h1>
+    <form id="ticket-form">
+      <label for="purchased-id">Purchased ID:</label>
+      <input type="text" id="purchased-id" name="purchasedId">
+
+      <label for="credit-card">Credit Card Number:</label>
+      <input type="text" id="credit-card" name="creditCardNumber">
+
+      <label for="holder-name">Holder Name:</label>
+      <input type="text" id="holder-name" name="holderName">
+
+      <label for="payed-amount">Payed Amount:</label>
+      <input type="text" id="payed-amount" name="payedAmount">
+
+      <label for="origin">Origin:</label>
+      <input type="text" id="origin" name="origin">
+
+      <label for="destination">Destination:</label>
+      <input type="text" id="destination" name="destination">
+
+      <label for="trip-date">Trip Date:</label>
+      <input type="date" id="trip-date" name="tripDate">
+
+      <input type="submit" value="Buy Ticket">
+    </form>
+
+    <script>
+      const form = document.getElementById("ticket-form");
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const purchasedId = document.getElementById("purchased-id").value;
+        const creditCardNumber = document.getElementById("credit-card").value;
+        const holderName = document.getElementById("holder-name").value;
+        const payedAmount = document.getElementById("payed-amount").value;
+        const origin = document.getElementById("origin").value;
+        const destination = document.getElementById("destination").value;
+        const tripDate = document.getElementById("trip-date").value;
+
+        const response = await fetch("/api/v1/payment/ticket", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer <insert-access-token-here>"
+          },
+          body: JSON.stringify({
+            purchasedId,
+            creditCardNumber,
+            holderName,
+            payedAmount,
+            origin,
+            destination,
+            tripDate
+          })
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          alert(data.message);
+        } else {
+          const data = await response.json();
+          alert(data.error);
+        }
+      });
+    </script>
+  </body>
+</html>

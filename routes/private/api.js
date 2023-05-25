@@ -159,60 +159,51 @@ module.exports = function (app) {
   app.post("/api/v1/payment/subscription", auth , async function (req, res) {
     const {purchasedId,creditCardNumber,holderName,payedAmount,subType,zoneId }= req.body;
     console.log(purchasedId,creditCardNumber,holderName,payedAmount,subType,zoneId );
-
+    let n ;
+    if(subType=="annual"){
+      n=100;
+    }
+    else if(subType=="month"){
+      n=10;
+    }
+    else if (subType=="quarterly"){
+      n=50;
+    }
     try {
-
       const user = await getUser(req);
       const user_id=user.userid;
       const sub = await db.select("*").from("se_project.subsription").where("userid",user_id)
+      console.log(sub,sub.length);
       if(sub.length!=0){
-       
- 
-   
- 
- 
-      const tran={
-       amount:payedAmount ,
-       userid:user_id ,
-       purchasediid:purchasedId
-     };
-     console.log("tran",tran)
-      await db("se_project.transactions").insert(tran);
- 
-      const tic = {
-       origin:origin,
-       destination:destination,
-       userid:user_id,
-       tripdate:tripDate,
-       //subiD:null
-      };
-      console.log("tic",tic)
- 
-      await db("se_project.tickets").insert(tic);
-    
- 
-      const t_id = await db.select("id").from("se_project.tickets").where("origin",origin).andWhere("destination", destination)
-      .andWhere("userid",user_id).andWhere("tripdate",tripDate).then((rows) => rows.map((row) => row.id));
- 
-       console.log(t_id);
+        console.log("!!!")
+        return res.status(400).json({error: "you already have a subsription "}) ;     
+        }
+        else{
+        const tran={
+          amount:payedAmount ,
+          userid:user_id ,
+          purchasediid:purchasedId
+        };
+        console.log("tran",tran)
+         await db("se_project.transactions").insert(tran)
+
+
+
+        const details = {
+          subtype:subType,
+          zoneid:zoneId,
+          userid:user_id,
+          nooftickets:n,
+         };
+
+         await db("se_project.subsription").insert(details);
+
+         return res.status(200).json({message: "subsription done"}) ;     
+
+        }
       
- 
-      const r ={
-       status:"upcoming",
-       origin:origin,
-       destination:destination,
-       userid:user_id,
-       tripdate:tripDate,
-       ticketid:t_id[0]
-     };
-     console.log("r",r); 
-     await db("se_project.rides").insert(r);
-     return res.status(200).json({message: "ride added"}) ;     
- 
-   }
-   else
-     return res.status(400).json({error: "you Donot have a subsription "}) ;     
-     } catch (e) {
+  } 
+  catch (e) {
        console.log(e.message);
  
        
