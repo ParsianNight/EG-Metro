@@ -100,8 +100,6 @@ module.exports = function (app) {
       console.log(db1)
       console.log("test")
       return res.status(200).json({message: "Zones Data are shown successfully"})
-      
-    
 
    } catch (err) 
     {
@@ -114,4 +112,94 @@ module.exports = function (app) {
 
   })
 
-};
+//
+  app.post('/api/v1/payment/subsription', async (req,res)=>{
+
+    const {userId , subscriptionType  , ZoneId, PurchaseId} = req.body;
+    // const userId = req.session.userId;
+     
+    let numTickets;
+    console.log(subscriptionType + " " , userId,ZoneId)
+  switch (subscriptionType) {
+    case 'annual':
+      numTickets = 100;
+      await db("se_project.subsription")
+      .select('*')
+      .where({userid:userId})
+      .then(async (rows) => {
+        if (rows.length > 0) {
+          console.log('User already subscriped, Subscription Updated to : annual');
+             await db('se_project.subsription')
+            .where('userid', userId)
+            .update({ subtype:"annual", nooftickets:numTickets , zoneid : ZoneId })
+            .then(()=> {
+              return res.status(200).json({message: "Subscriped successfully"})
+            })  
+        } else {
+          
+           await db('se_project.subsription')
+          .insert({userid:userId , subtype:"annual", nooftickets:numTickets , zoneid : ZoneId })
+          .then(()=> {
+            return res.status(200).json({message: "User already subscriped, Subscription Updated to : annual"})
+          })  
+        }
+  })
+break;
+    case 'quarterly':
+      numTickets = 50;
+      await db("se_project.subsription")
+     .select('*')
+      .where({userid:userId})
+      .then(async (rows) => {
+        if (rows.length > 0) {
+          console.log('User already subscriped, Subscription Updated to : quarterly');
+             await db('se_project.subsription')
+            .where('userid', userId)
+            .update({ subtype:"quarterly", nooftickets:numTickets , zoneid : ZoneId })
+            .then(()=> {
+              return res.status(200).json({message: "User already subscriped, Subscription Updated to : quarterly"})
+            })  
+        } else {
+          
+           await db('se_project.subsription')
+          .insert({userid:userId , subtype:"quarterly", nooftickets:numTickets , zoneid : ZoneId })
+          .then(()=> {
+            return res.status(200).json({message: "Subscriped successfully"})
+          })  
+        }
+  })
+  break;
+
+    case 'monthly':
+      numTickets = 10;
+      await db("se_project.subsription")
+      .select('*')
+       .where({userid:userId})
+       .then(async (rows) => {
+         if (rows.length > 0) {
+           console.log('User already subscriped, Subscription Updated to : Monthly');
+              await db('se_project.subsription')
+             .where('userid', userId)
+             .update({ subtype:"monthly", nooftickets:numTickets , zoneid : ZoneId })
+             .then(()=> {
+              return res.status(200).json({message: 'User already subscriped, Subscription Updated to : Monthly'})
+            })  
+         } else {
+           
+            await db('se_project.subsription')
+           .insert({userid:userId , subtype:"monthly", nooftickets:numTickets , zoneid : ZoneId })
+           .then(()=> {
+             return res.status(200).json({message: "Subscriped successfully"})
+           })  
+         }
+   })
+   break;
+
+    default:
+      return res.status(400).json({ error: 'Invalid subscription type' });
+  }
+
+  })
+}
+
+
