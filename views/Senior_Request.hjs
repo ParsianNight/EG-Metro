@@ -1,4 +1,3 @@
-<!-- senior_request.hjs -->
 <!DOCTYPE html>
 <html>
   <head>
@@ -46,15 +45,42 @@
         background-color: #45a049;
       }
     </style>
+    <script>
+      // Function to handle the form submission
+      function submitSeniorRequest() {
+        const nationalId = document.getElementById("nationalId").value;
+
+        fetch("/api/v1/senior/request", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ nationalId: nationalId }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            const messageContainer = document.getElementById("message");
+            if (data.error) {
+              messageContainer.textContent = `Error: ${data.error}`;
+            } else if (data.message) {
+              messageContainer.textContent = data.message;
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
+    </script>
   </head>
   <body>
     <div class="container">
       <h1>Senior Request</h1>
-      <form action="/api/v1/senior/request" method="POST">
+      <form onsubmit="event.preventDefault(); submitSeniorRequest();">
         <label for="nationalId">National ID:</label>
         <input type="text" id="nationalId" name="nationalId" required>
         <button type="submit">Submit Request</button>
       </form>
+      <p id="message"></p>
     </div>
   </body>
 </html>

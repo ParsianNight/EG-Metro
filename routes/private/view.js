@@ -49,8 +49,12 @@ module.exports = function(app) {
     return res.render('refund_requests' ,  { ...user, tickets });
   });
 
-  app.get("/requests/senior", (req, res) => {
+  app.get("/requests/senior", async (req, res) => {
     res.render("Senior_Request");
+  });
+
+  app.get("/rises/simulate" ,async(req,res)=>{
+    res.render("simulate_ride")
   });
  
 };

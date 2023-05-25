@@ -44,7 +44,7 @@ app.get("/users", auth , async function (req, res) {
       return res.status(400).send("Could not get users");
     }
   });
-  //DONE
+  //DONE price n2sa 
 app.post("/api/v1/refund/:ticketId" ,async function (req,res){
   try {
     const { ticketId } = req.params;
@@ -109,7 +109,7 @@ app.post("/api/v1/senior/request", async function (req,res)  {
   console.log("vwwcw",requests_Exists);
   try {
     if(requests_Exists == "pending"){
-      return res.status(400).json({ error: 'Already Requsted ' }); 
+      return res.status(409).json({ message: 'Already Requsted ' }); 
     }
 
       const seniorrequests = {
@@ -118,6 +118,7 @@ app.post("/api/v1/senior/request", async function (req,res)  {
         nationalid:nationalId 
      
       };
+      console.log(seniorrequests);
       await db("se_project.senior_requests").insert(seniorrequests);
       return res.status(200).json({ message: "Request Submitted." });
     
@@ -130,7 +131,7 @@ app.post("/api/v1/senior/request", async function (req,res)  {
 
 //waiting for donia q
 app.put("/api/v1/ride/simulate",async(req,res)=>{
-  console.log("sdfgh"); 
+  //console.log("sdfgh"); 
   const {origin , destination , tripDate} = req.body;
   if (!origin || !destination || !tripDate) {
     return res.status(400).json({ error: "Missing required fields" });
@@ -145,7 +146,7 @@ app.put("/api/v1/ride/simulate",async(req,res)=>{
       destination: destination,
       tripdate : tripDate
     }).then((rows) => rows.map((row) => row.status));
-
+    
     const id = await db.select("id").from("se_project.rides")
     .where({
       userid: user.id,
@@ -153,10 +154,11 @@ app.put("/api/v1/ride/simulate",async(req,res)=>{
       destination: destination,
       tripdate : tripDate
     }).then((rows) => rows.map((row) => row.id));
-    console.log(rideExists)
-    console.log(id)
+    console.log("rideExists",rideExists);
+    console.log("id",id);
 
-    if (rideExists.length>0) {
+    if (id.length>0) {
+      console.log("hiii1");
       if (rideExists[0] === "Completed") {
         res.status(200).json({ message: "Ride has already been completed" });
       } else {
