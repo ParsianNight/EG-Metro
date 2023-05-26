@@ -68,9 +68,7 @@ app.post("/api/v1/refund/:ticketId" ,async function (req,res){
     
 
      const user = await getUser(req);
-    // if (ticket.userid !== user.id) {
-    //   return res.status(403).json({ error: "Unauthorized to refund this ticket" });
-    // }
+  
     const currDate = new Date();
     const ticketDate = new Date(ticket.tripdate);
 
@@ -178,9 +176,10 @@ app.put("/api/v1/ride/simulate",async(req,res)=>{
 });
 
 
-/*//index
-  const startIndex = stations.findIndex(station => station.id === originId);
-  const endIndex = stations.findIndex(station => station.id === destinationId);
-*/
+
+
+
+
+
 
 }
