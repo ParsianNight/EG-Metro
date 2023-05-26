@@ -115,7 +115,7 @@ module.exports = function (app) {
   }
 
  
-
+//check price
   app.post("/api/v1/tickets/price/:originId:destinationId",async function (req, res)  { 
    // const user = await getUser(req)
    const origin =parseInt(req.params.originId);
@@ -155,7 +155,7 @@ module.exports = function (app) {
   });
 
 
-
+// Pay for subscription online
   app.post("/api/v1/payment/subscription", auth , async function (req, res) {
     const {purchasedId,creditCardNumber,holderName,payedAmount,subType,zoneId }= req.body;
     console.log(purchasedId,creditCardNumber,holderName,payedAmount,subType,zoneId );
@@ -175,7 +175,6 @@ module.exports = function (app) {
       const sub = await db.select("*").from("se_project.subsription").where("userid",user_id)
       console.log(sub,sub.length);
       if(sub.length!=0){
-        console.log("!!!")
         return res.status(400).json({error: "you already have a subsription "}) ;     
         }
         else{
@@ -213,7 +212,7 @@ module.exports = function (app) {
 
 });
 
-
+// Pay for ticket online
   app.post("/api/v1/payment/ticket", auth , async function (req, res) {
     const {purchasedId,creditCardNumber,holderName,payedAmount,origin,destination,tripDate }= req.body;
     console.log(purchasedId,creditCardNumber,holderName,payedAmount,origin,destination,tripDate )
@@ -268,8 +267,10 @@ module.exports = function (app) {
 
   }
   else
+  {
+    console.log("--")
     return res.status(400).json({error: "you have a subsription so you canot pay online"}) ;     
-    } catch (e) {
+  } } catch (e) {
       console.log(e.message);
 
       
@@ -279,8 +280,37 @@ module.exports = function (app) {
   });  
 
 
+//Pay for ticket by subscription
+  app.post("/api/v1/tickets/purchase/subscription", auth , async function (req, res) {
+    const {subId,origin,destination,tripDate }= req.body;
+    console.log(subId,origin,destination,tripDate )
+    try{
+      const user = await getUser(req);
+      const user_id=user.userid;
+      let n = await db.select("nooftickets").from("se_project.subsription").where("userid",user_id)
+      .then((rows) => rows.map((row) => row.nooftickets));
+      console.log(n,n.length);
+      if(n.length==0){
+        return res.status(400).json({error: "you don't have a subsription "}) ;     
+        }
+      else{
 
+      if(n==0){
+        return res.status(400).json({error: "you don't have a tickets left in your subsription "}) ;     
+      }
+      else{
+        n[0]=n[0]-1;
+        console.log(n[0])
+        await db("se_project.subsription")
+          .where({ "id": subId })
+          .update({ "nooftickets": n[0] });
+          return res.status(200).json({message: "tickets purchased"}) ;     
 
+            }      }}
+      catch (e) {
+        console.log(e.message);
+  }
+    });
   
 
 };
