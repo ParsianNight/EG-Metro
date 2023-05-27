@@ -25,7 +25,8 @@ const getUser = async function (req) {
     )
     .first();
 
- // console.log("user =>", user);
+
+
   user.isNormal = user.roleId === roles.user;
   user.isAdmin = user.roleId === roles.admin;
   user.isSenior = user.roleId === roles.senior;
@@ -45,142 +46,479 @@ module.exports = function (app) {
       return res.status(400).send("Could not get users");
     }
   });
-  //DONE price n2sa 
-app.post("/api/v1/refund/:ticketId" ,async function (req,res){
-  try {
-    const { ticketId } = req.params;
-
-    const ticket = await db
-      .select("*")
-      .from("se_project.tickets")
-      .where("id", ticketId);
-
-    const refundTicket = await db
-      .select("*")
-      .from("se_project.refund_requests")
-      .where("ticketid", ticketId);
-    if (ticket.length==0) {
-      return res.status(404).json({ error: "Ticket Not Found" });
-    }
-    if(refundTicket.length>0){
-      return res.status(400).json({ error: 'Refund Still Being Reviewed' });
-    }
+  
+ async function countStations(Start, End,visited_stations) {
+  console.log("start id:",Start,"end id:",End)
+  if (Start ===End ){
+    visited_stations.push(Start)
+   return visited_stations.length;
+  }
+  visited_stations.push(Start)
+  let originposition = await db.select("stationposition").from("se_project.stations").where("id",Start)
+  console.log("originposition: ",originposition)
+  if (originposition=="middle"){
+     console.log("inM")
+  //      // 
+  //   let curr_SR=[]
+  //   let Rend=[]
+  //   curr_SR=getstationroutes(Start)
+  //   for (let i = 0; i < curr_SR.length; i++) {
+  //      Rend.push(await db
+  //     .select("toStationid")
+  //     .from("se_project.routes")
+  //     .where("id", curr_SR[i])
+  //     .where("fromStationid",Start))
+  //     .whereNotIn("toStationid",visited_stations)
+  //     console.log("REEEEEND",Rend[i])
+      
+  //     countStations(Rend[i],End,visited_stations)
+  //  }
+  }
+   else {
      
+    console.log("notM")
+
+     //curr_SR=[]
+  let curr_SR = await getstationroutes(Start);
+
+
+  // create station
+  app.post("/api/v1/station", async function (req, res) {
+    try {
+      const newStation = {
+        stationname: req.body.stationName,
+        stationtype: req.body.stationType == 0 ? "normal" : "transfer",
+        stationposition: null,
+        stationstatus: "new"
+      };
+      const station = await db("se_project.stations").insert(newStation).returning("*");
+      res.status(201).json(station);
+    } catch (e) {
+      console.log(e.message);
+      res.status(400).send("Error occurred, please recheck the data you entered!");
+    }
+  });
+
+  // update station
+  app.put("/api/v1/station/:id", async function (req, res) {
+    try {
+      const updateStation = {};
+
+      if (req.body.stationName) {
+        updateStation.stationname = req.body.stationName;
+      }
+
+      if (req.body.stationType !== undefined) {
+        updateStation.stationtype = req.body.stationType === 0 ? "normal" : "transfer";
+      }
+
+      if (req.body.stationStatus) {
+        updateStation.stationstatus = req.body.stationStatus;
+      }
+
+      if (Object.keys(updateStation).length === 0) {
+        throw new Error("No valid data provided for updating a station");
+      }
+
+
+
+
+      var station = await db("se_project.stations").where("id", req.params.id).update(updateStation);
+      if (station == 0) {
+        throw new Error("error while updating a station, please try again later");
+      }
+      station = await db.select('*').from("se_project.stations").where("id", req.params.id)
+
+      res.status(200).json(station);
+    } catch (e) {
+      console.log(e.message);
+      res.status(400).send("Error occurred, please recheck the data you entered!");
+    }
+  });
+
+/**
+ * Function for checking position of the station
+ */
+async function alterPosition(affectedStations) {
+  for (const id of affectedStations) {
+    var startRoute1 = await db.select('*').from("se_project.routes").where("fromstationid", id);
+    var endRoute1 = await db.select('*').from("se_project.routes").where("tostationid", id);
     
+    if (Object.keys(startRoute1).length !== 0 && Object.keys(endRoute1).length !== 0) {
+      await db("se_project.stations").where("id", id).update({ stationposition: 'middle' });
+    } else if (Object.keys(startRoute1).length !== 0) {
+      await db("se_project.stations").where("id", id).update({ stationposition: 'start' });
+    } else if (Object.keys(endRoute1).length !== 0) {
+      await db("se_project.stations").where("id", id).update({ stationposition: 'end' });
+    } else {
+      await db("se_project.stations").where("id", id).update({ stationposition: '' });
+    }
+  }
+}
+
+  // delete a station
+  app.delete("/api/v1/station/:id", async function (req, res) {
+    var affectedStations = new Set();
+
+    try {
+
+      var startRoute = await db.select('*').from("se_project.routes").where("fromstationid", req.params.id)
+      var endRoute = await db.select('*').from("se_project.routes").where("tostationid", req.params.id)
+// Adding new routes after we demolish the routes of the deleted station.
+      if (Object.keys(startRoute).length === 0 && Object.keys(endRoute).length === 0) {
+        deleted = await db("se_project.stations")
+          .where("id", req.params.id)
+          .del()
+      } else {
+        if(Object.keys(startRoute).length !== 0){
+        for (const Query in startRoute) {
+          var fromID;
+          var toID;
+          // iterate over attributes of object containning routes where tostationid is needed
+          for (const r1 in startRoute[Query]) {
+            if (r1 == "tostationid") {
+              toID = startRoute[Query][r1]
+            }
+          }
+          
+          for (const Query2 in endRoute) {
+            for (const r2 in endRoute[Query2]) {
+              if (r2 == "fromstationid") {
+                fromID = endRoute[Query2][r2]
+                affectedStations.add(fromID)
+
+              }
+            }
+            if (toID != null && fromID != null) {
+              const newRoute = {
+                fromstationid: fromID,
+                tostationid: toID,
+                routename: "hi" + fromID +"x"+ toID
+                
+              };
+              const route = await db("se_project.routes").insert(newRoute).returning("*");
+            }
+          }
+          affectedStations.add(toID)
+        }
+      } else {
+        for (const Query2 in endRoute) {
+          for (const r2 in endRoute[Query2]) {
+            if (r2 == "fromstationid") {
+              fromID = endRoute[Query2][r2]
+              affectedStations.add(fromID)
+
+            }
+          }
+      }
+    }
+        // Changing position 
+
+        var route = await db("se_project.routes")
+        .where("tostationid", req.params.id)
+        .del()
+         route = await db("se_project.routes")
+        .where("fromstationid", req.params.id)
+        .del()
+
+
+
+        deleted = await db("se_project.stations")
+        .where("id", req.params.id)
+        .del()
+      }
+      await alterPosition(affectedStations)
+      res.status(200).send("Station deleted successfully!");
+    } catch (e) {
+      console.log(e.message)
+      res.status(400).send(e.message)
+    }
+
+  })
+
+  // create route
+  app.post("/api/v1/route", async function (req, res) {
+    try {
+      const newRoute = {
+        fromstationid: req.body.fromStationId,
+        tostationid: req.body.toStationId,
+        routename: req.body.routeName
+      };
+      console.log(newRoute)
+      const route = await db("se_project.routes").insert(newRoute).returning("*");
+      await alterPosition(new Set([req.body.toStationId,req.body.fromStationId]))
+
+      res.status(201).json(route);
+    } catch (e) {
+      console.log(e.message);
+      res.status(400).send("Error occurred, please recheck the data you entered!");
+    }
+  });
+
+  // update route
+  app.put("/api/v1/route/:id", async function (req, res) {
+    try {
+      const updateRoute = {};
+
+      if (req.body.routeName) {
+        updateRoute.routename = req.body.routeName;
+      }
+
+      if (Object.keys(updateRoute).length === 0) {
+        throw new Error("No valid name provided for updating a route");
+      }
+
+
+
+
+      var station = await db("se_project.routes").where("id", req.params.id).update(updateRoute);
+      if (station == 0) {
+        throw new Error("error while updating a route, please try again later");
+      }
+      station = await db.select('*').from("se_project.routes").where("id", req.params.id)
+
+      res.status(200).json(station);
+    } catch (e) {
+      console.log(e.message);
+      res.status(400).send("Error occurred, please recheck the data you entered!");
+    }
+  });
+  // delete route
+  app.delete("/api/v1/route/:id", async function (req, res) {
+
+    try {
+
+      var route = await db.select('*').from("se_project.routes").where("id", req.params.id)
+      if (Object.keys(route).length === 0) {
+        throw new Error("route not found!");
+      }
+      affectedStations = new Set();
+      affectedStations.add(route[0]["tostationid"])
+      affectedStations.add(route[0]["fromstationid"])
+      t = await db("se_project.routes")
+        .where("id", req.params.id)
+        .del()
+        
+      await alterPosition(affectedStations)
+      res.status(200).send("deleted successfully!");
+    } catch (e) {
+      console.log(e.message)
+      res.status(400).send(e.message)
+    }
+
+  })
+
+
+};
+   
+     console.log(curr_SR)
+  console.log(curr_SR.length)
+  for (let i = 0; i < curr_SR.length; i++) {
+    console.log("i",i)
+    let Rend=await db
+    .select("tostationid")
+    .from("se_project.routes")
+    .where("id", curr_SR[i])
+    .where("fromstationid",Start)
+    .then((rows) => rows.map((row) => row.tostationid));
+    console.log("REnd",Rend)
+    Start=Rend[i];
+      if (Start ===End ){    
+        visited_stations.push(Start)
+        console.log("visited_stations.length",visited_stations.length)
+       return visited_stations.length;
+      }
+   // countStations(Start,End,visited_stations)
+  
+  }
+}}
+  const getstationroutes = async function (StationID) {
+    let curr_stationroutes=[];
+    curr_stationroutes = await db
+  .select("routeid")
+  .from("se_project.stationroutes")
+  .where("stationid", StationID)
+  .then((rows) => rows.map((row) => row.routeid));
+
+  
+    return curr_stationroutes;
+  
+  }
+
+ 
+
+  app.post("/api/v1/tickets/price/:originId:destinationId",async function (req, res)  { 
+   // const user = await getUser(req)
+   const origin =parseInt(req.params.originId);
+   console.log(origin,typeof origin)
+   const destination =parseInt(req.params.destinationId);
+   console.log(destination)
+
+       let visited_stations=[]
+    try{
+      // const user = await db
+      // .select("*")
+      // .from("se_project.subsription")
+      // .where("userid", session)
+      // if (user==null){
+
+      //   const user = await db
+      //   .select("*")
+      //   .from("se_project.tickets")
+      //   .where("userid",session[0])
+      // }
+
+      console.log("el return",countStations(origin,destination,visited_stations))
+      console.log("ezaaay")
+    
+      //get the route from database ,then iterate on the stations till it reachs the destination 
+      //while cheaking that all station is not transefer station 
+      //if it is transfer station put it in array x till it reaches destenation 
+      //the stop condition will be reaching end or start station
+      //if i reach destination merge 2 array  
+      // get length of array which equal to number of stations
+      
+    
+ } catch(e){
+   console.log(e.message);
+   return res.status(400).send("Could not get price");
+}
+  });
+
+
+
+  app.post("/api/v1/payment/subscription", auth , async function (req, res) {
+    const {purchasedId,creditCardNumber,holderName,payedAmount,subType,zoneId }= req.body;
+    console.log(purchasedId,creditCardNumber,holderName,payedAmount,subType,zoneId );
+
+    try {
+
+      const user = await getUser(req);
+      const user_id=user.userid;
+      const sub = await db.select("*").from("se_project.subsription").where("userid",user_id)
+      if(sub.length!=0){
+       
+ 
+   
+ 
+ 
+      const tran={
+       amount:payedAmount ,
+       userid:user_id ,
+       purchasediid:purchasedId
+     };
+     console.log("tran",tran)
+      await db("se_project.transactions").insert(tran);
+ 
+      const tic = {
+       origin:origin,
+       destination:destination,
+       userid:user_id,
+       tripdate:tripDate,
+       //subiD:null
+      };
+      console.log("tic",tic)
+ 
+      await db("se_project.tickets").insert(tic);
+    
+ 
+      const t_id = await db.select("id").from("se_project.tickets").where("origin",origin).andWhere("destination", destination)
+      .andWhere("userid",user_id).andWhere("tripdate",tripDate).then((rows) => rows.map((row) => row.id));
+ 
+       console.log(t_id);
+      
+ 
+      const r ={
+       status:"upcoming",
+       origin:origin,
+       destination:destination,
+       userid:user_id,
+       tripdate:tripDate,
+       ticketid:t_id[0]
+     };
+     console.log("r",r); 
+     await db("se_project.rides").insert(r);
+     return res.status(200).json({message: "ride added"}) ;     
+ 
+   }
+   else
+     return res.status(400).json({error: "you Donot have a subsription "}) ;     
+     } catch (e) {
+       console.log(e.message);
+ 
+       
+     }
+ 
+
+
+});
+
+
+  app.post("/api/v1/payment/ticket", auth , async function (req, res) {
+    const {purchasedId,creditCardNumber,holderName,payedAmount,origin,destination,tripDate }= req.body;
+    console.log(purchasedId,creditCardNumber,holderName,payedAmount,origin,destination,tripDate )
+    try {
 
      const user = await getUser(req);
+     const user_id=user.userid;
+     const sub = await db.select("*").from("se_project.subsription").where("userid",user_id)
+     if(sub.length==0){
+      
+
   
-    const currDate = new Date();
-    const ticketDate = new Date(ticket.tripdate);
 
-    if (ticketDate >= currDate){
-      return res.status(400).json({ error: "Cannot refund past or current date tickets" });
+
+     const tran={
+      amount:payedAmount ,
+      userid:user_id ,
+      purchasediid:purchasedId
     };
-    //refundamount m3rfsh gaya mnen
-    const refundRequest = {
-      status: "pending",
-      userid: user.userid,
-      refundamount: "2",
-      ticketid: ticketId,
-    };
+    console.log("tran",tran)
+     await db("se_project.transactions").insert(tran);
 
-    await db("se_project.refund_requests").insert(refundRequest);
+     const tic = {
+      origin:origin,
+      destination:destination,
+      userid:user_id,
+      tripdate:tripDate,
+      //subiD:null
+     };
+     console.log("tic",tic)
 
-    return res.status(200).json({ message: "Ticket Is Added To Refund List." });
+     await db("se_project.tickets").insert(tic);
+   
 
+     const t_id = await db.select("id").from("se_project.tickets").where("origin",origin).andWhere("destination", destination)
+     .andWhere("userid",user_id).andWhere("tripdate",tripDate).then((rows) => rows.map((row) => row.id));
 
-  } catch (error) {
-    return res.status(400).json({ error: 'Failed to submit refund request' });
-
-  }
-
-});
-
-//DONE
-app.post("/api/v1/senior/request", async function (req,res)  {
-  //console.log("dfghn");
-  const {nationalId} = req.body;
-  console.log(nationalId);
-  const user = await getUser(req);
-
-  const requests_Exists = await db.select("status").from("se_project.senior_requests")
-  .where("userid",user.userid).then((rows) => rows.map((row) => row.status));;
-  console.log("vwwcw",requests_Exists);
-  try {
-    if(requests_Exists == "pending"){
-      return res.status(409).json({ message: 'Already Requsted ' }); 
-    }
-
-      const seniorrequests = {
-        status: "pending",
-        userid: user.userid,
-        nationalid:nationalId 
+      console.log(t_id);
      
-      };
-      console.log(seniorrequests);
-      await db("se_project.senior_requests").insert(seniorrequests);
-      return res.status(200).json({ message: "Request Submitted." });
-    
-    
-  } catch (error) {
-    return res.status(400).json({ error: 'Failed To Submit Request' });
+
+     const r ={
+      status:"upcoming",
+      origin:origin,
+      destination:destination,
+      userid:user_id,
+      tripdate:tripDate,
+      ticketid:t_id[0]
+    };
+    console.log("r",r); 
+    await db("se_project.rides").insert(r);
+    return res.status(200).json({message: "ride added"}) ;     
+
   }
+  else
+    return res.status(400).json({error: "you have a subsription so you canot pay online"}) ;     
+    } catch (e) {
+      console.log(e.message);
 
-});
-
-//waiting for donia q
-app.put("/api/v1/ride/simulate",async(req,res)=>{
-  //console.log("sdfgh"); 
-  const {origin , destination , tripDate} = req.body;
-  if (!origin || !destination || !tripDate) {
-    return res.status(400).json({ error: "Missing required fields" });
-  }
-  const user = await getUser(req);
-  
-  try {
-    const rideExists = await db.select("status").from("se_project.rides")
-    .where({
-      userid: user.id,
-      origin: origin,
-      destination: destination,
-      tripdate : tripDate
-    }).then((rows) => rows.map((row) => row.status));
-    
-    const id = await db.select("id").from("se_project.rides")
-    .where({
-      userid: user.id,
-      origin: origin,
-      destination: destination,
-      tripdate : tripDate
-    }).then((rows) => rows.map((row) => row.id));
-    console.log("rideExists",rideExists);
-    console.log("id",id);
-
-    if (id.length>0) {
-      console.log("hiii1");
-      if (rideExists[0] === "Completed") {
-        res.status(200).json({ message: "Ride has already been completed" });
-      } else {
-        await db("se_project.rides")
-          .where({ "id": id[0] })
-          .update({ status: "Completed" });
-
-        return res.status(200).json({ message: "Ride simulated successfully" });
-      }
-    } else {
-      res.status(404).json({ message: "Ride not found" });
+      
     }
-  } catch (error) {
-    return res.status(500).json({ error: "Failed to simulate ride" });
-  } 
 
-});
+
+  });  
 
 
 
 
-
-
-
-
-}
+  

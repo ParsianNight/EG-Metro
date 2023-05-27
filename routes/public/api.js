@@ -30,6 +30,7 @@ app.post("/api/v1/user", async function (req, res) {
       return res.status(400).send("Could not register user");
     }
   });
+  //  check price
 
   // Register HTTP endpoint to create new user
   app.post("/api/v1/user/login", async function (req, res) {
@@ -62,7 +63,7 @@ app.post("/api/v1/user", async function (req, res) {
     // set the expiry time as 15 minutes after the current time
     const token = v4();
     const currentDateTime = new Date();
-    const expiresat = new Date(+currentDateTime + 18000000); // expire in 3 minutes
+    const expiresat = new Date(+currentDateTime + 180000); // expire in 3 minutes
 
     // create a session containing information about the user and expiry time
     const session = {
