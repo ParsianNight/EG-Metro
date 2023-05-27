@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>EG-Metro</title>
+    <link rel='stylesheet' href='/styles/bootstrap.min.css' />
+    <link rel='stylesheet' href='/styles/style.css' />
+    <script src="/js/jquery-2.2.0.min.js" type="text/javascript"></script>
+    <script src="/js/bootstrap.min.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <div>
+      <div>
+        <nav class="navbar navbar-inverse" style="padding-left:130px;">
+          <ul class="nav navbar-nav">
+            <li><a href="/dashboard">Home</a></li>
+            <li class="active"><a href="/manage/routes">Routes</a></li>
+            <li><a href="/users">Users</a></li>
+            <li><a href="/users/add">Add Users</a></li>
+            <li><a href="/">Logout</a></li>       
+          </ul>
+        </nav>
+      </div>
+      <br/>
+     
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">ID</th>
+            <th scope="col">From Station id </th>
+            <th scope="col">To Station id </th>
+            <th scope="col">Name</th>
+            <th scope="col">Actions</th> <!-- Added column for actions -->
+          </tr>
+        </thead>
+        <tbody>
+          {{#routes}}
+          <tr>
+            <td>{{id}}</td>
+            <td>{{fromstationid}}</td>
+            <td>{{tostationid}}</td>
+            <td>
+              <span class="route-name">{{routename}}</span>
+              <input type="text" class="form-control route-name-input" value="{{routename}}" style="display: none;">
+            </td>
+            <td>
+              <button class="btn btn-danger btnDeleteRoute" data-route-id="{{id}}">Delete</button>
+              <button class="btn btn-primary btnModifyRoute" data-route-id="{{id}}">Modify</button>
+              <button class="btn btn-success btnSaveRoute" data-route-id="{{id}}" style="display: none;">Save</button>
+              <button class="btn btn-secondary btnCancelEdit" data-route-id="{{id}}" style="display: none;">Cancel</button>
+            </td>
+          </tr> 
+          {{/routes}}
+        </tbody>
+      </table>
+
+      {{#isAdmin}}
+      <div style="text-align: center; ">
+        <button id="btnAddRoute" class="btn btn-primary" style="position:center; ">Add Route</button>
+        <br />
+        <div id="addRouteForm" style="display: none;">
+          <label for="fromStation">From Station id :</label>
+          <input type="text" id="fromStation" name="fromStation" class="form-control" />
+          <br />
+          <label for="toStation">To Station id:</label>
+          <input type="text" id="toStation" name="toStation" class="form-control" />
+          <br />
+          <label for="routeName">Route Name :</label>
+          <input type="text" id="routeName" name="routeName" class="form-control" />
+          <br />
+          <button id="btnSaveRoute" class="btn btn-primary">Save</button>
+          <button id="btnCancel" class=".btn btn-secondary">Cancel</button>
+        </div>
+      </div>
+      {{/isAdmin}}
+    </div>
+
+    <script>
+      // Add event listener for Add Route button
+      $("#btnAddRoute").on("click", function() {
+        $("#addRouteForm").toggle();
+      });
+
+      // Add event listener for Save Route button
+$("#btnSaveRoute").on("click", function() {
+  var fromStationId = $("#fromStation").val();
+  var toStationId = $("#toStation").val();
+  var routeName = $("#routeName").val();
+    console.log(fromStationId)
+    console.log( $("#fromStation").val())
+  // Perform validation here if necessary
+
+  // Create the data object to send in the AJAX request
+  var data = {
+    fromStationId: fromStationId,
+    toStationId: toStationId,
+    routeName: routeName
+  };
+    console.log(data)
+  $.ajax({
+    url: "/api/v1/route",
+    type: "POST",
+    data: data,
+    success: function(response) {
+      // Handle the success response here
+      console.log("Route created successfully:", response);
+      location.reload()
+    },
+        error: function(xhr, status, error) {
+      // Handle the error response here
+      console.log("Error occurred:", error);
+      // You can display an error message to the user or perform any necessary actions
+        }
+     }); 
+  });
+
+      // Add event listener for Delete Route button
+      $(document).on("click", ".btnDeleteRoute", function() {
+        var routeId = $(this).data("route-id");
+        $.ajax({
+    url: "/api/v1/route/"+routeId,
+    type: "DELETE",
+    success: function(response) {
+      // Handle the success response here
+      alert("Route removed successfully:" + response);
+      location.reload()
+    },
+        error: function(xhr, status, error) {
+      // Handle the error response here
+      console.log("Error occurred:", error);
+      // You can display an error message to the user or perform any necessary actions
+        }
+     }); 
+      });
+
+// Add event listener for Modify Route button
+$(document).on("click", ".btnModifyRoute", function() {
+  var routeId = $(this).data("route-id");
+
+  // Retrieve the row elements related to the clicked modify button
+  var $row = $(this).closest("tr");
+  var $routeName = $row.find(".route-name");
+  var $routeNameInput = $row.find(".route-name-input");
+  var $btnSave = $row.find(".btnSaveRoute");
+  var $btnCancel = $row.find(".btnCancelEdit");
+
+  // Toggle the visibility of elements to enable editing
+  $routeName.hide();
+  $routeNameInput.val($routeName.text()).show();
+  $btnSave.show();
+  $btnCancel.show();
+
+  // Add event listener for Cancel button to revert changes
+  $btnCancel.on("click", function() {
+    $routeNameInput.val($routeName.text());
+    $routeName.show();
+    $routeNameInput.hide();
+    $btnSave.hide();
+    $btnCancel.hide();
+  });
+
+  // Add event listener for Save button to update the route
+  $btnSave.on("click", function() {
+    var newRouteName = $routeNameInput.val();
+
+    // Create the data object to send in the AJAX request
+    var data = {
+      routeName: newRouteName
+    };
+
+    $.ajax({
+      url: "/api/v1/route/" + routeId,
+      type: "PUT",
+      data: data,
+      success: function(response) {
+        // Handle the success response here
+        console.log("Route modified successfully:", response);
+        // Update the UI with the new route name
+        $routeName.text(newRouteName);
+        $routeName.show();
+        $routeNameInput.hide();
+        $btnSave.hide();
+        $btnCancel.hide();
+      },
+      error: function(xhr, status, error) {
+        // Handle the error response here
+        console.log("Error occurred:", error);
+        // You can display an error message to the user or perform any necessary actions
+      }
+    });
+  });
+});
+    </script>
+  </body>
+</html>

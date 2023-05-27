@@ -1,11 +1,11 @@
 const db = require('../../connectors/db');
 const roles = require('../../constants/roles');
 const { getSessionToken } = require('../../utils/session');
-
+// TODO -> create a navbar for admins and one for users
 const getUser = async function(req) {
   const sessionToken = getSessionToken(req);
 
-
+  //console.log(sessionToken)
   const user = await db.select('*')
     .from('se_project.sessions')
     .where('token', sessionToken)
@@ -13,7 +13,7 @@ const getUser = async function(req) {
     .innerJoin('se_project.roles', 'se_project.users.roleid', 'se_project.roles.id')
     .first();
   
-  console.log('user =>', user)
+ // console.log('user =>', user)
   user.isStudent = user.roleid === roles.student;
   user.isAdmin = user.roleid === roles.admin;
   user.isSenior = user.roleid === roles.senior;
@@ -25,7 +25,6 @@ module.exports = function(app) {
   // Register HTTP endpoint to render /users page
   app.get('/dashboard', async function(req, res) {
     const user = await getUser(req);
-    console.log(1)
     return res.render('dashboard', user);
   });
 
@@ -35,11 +34,11 @@ module.exports = function(app) {
     return res.render('users', { users });
   });
 
-  // Register HTTP endpoint to render /courses page
-  app.get('/stations', async function(req, res) {
+  // Register HTTP endpoint to render routesManageing page
+  app.get('/manage/stations', async function(req, res) {
     const user = await getUser(req);
     const stations = await db.select('*').from('se_project.stations');
-    return res.render('stations_example', { ...user, stations });
+    return res.render('stationsManageing', { ...user, stations });
   });
 
   app.get("/requests/refund" , async (req,res) =>{
