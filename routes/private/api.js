@@ -331,7 +331,7 @@ async function alterPosition(affectedStations) {
    // countStations(Start,End,visited_stations)
   
   }
-}}
+}
   const getstationroutes = async function (StationID) {
     let curr_stationroutes=[];
     curr_stationroutes = await db
@@ -346,7 +346,7 @@ async function alterPosition(affectedStations) {
   }
 
  
-
+//check price
   app.post("/api/v1/tickets/price/:originId:destinationId",async function (req, res)  { 
    // const user = await getUser(req)
    const origin =parseInt(req.params.originId);
@@ -356,27 +356,6 @@ async function alterPosition(affectedStations) {
 
        let visited_stations=[]
     try{
-      // const user = await db
-      // .select("*")
-      // .from("se_project.subsription")
-      // .where("userid", session)
-      // if (user==null){
-
-      //   const user = await db
-      //   .select("*")
-      //   .from("se_project.tickets")
-      //   .where("userid",session[0])
-      // }
-
-      console.log("el return",countStations(origin,destination,visited_stations))
-      console.log("ezaaay")
-    
-      //get the route from database ,then iterate on the stations till it reachs the destination 
-      //while cheaking that all station is not transefer station 
-      //if it is transfer station put it in array x till it reaches destenation 
-      //the stop condition will be reaching end or start station
-      //if i reach destination merge 2 array  
-      // get length of array which equal to number of stations
       
     
  } catch(e){
@@ -385,102 +364,91 @@ async function alterPosition(affectedStations) {
 }
   });
 
+// payment FOR sub
 
+app.post("/api/v1/payment/subscription", auth , async function (req, res) {
+  const {purchasedId,creditCardNumber,holderName,payedAmount,subType,zoneId }= req.body;
+  console.log(purchasedId,creditCardNumber,holderName,payedAmount,subType,zoneId );
 
-  app.post("/api/v1/payment/subscription", auth , async function (req, res) {
-    const {purchasedId,creditCardNumber,holderName,payedAmount,subType,zoneId }= req.body;
-    console.log(purchasedId,creditCardNumber,holderName,payedAmount,subType,zoneId );
+  try {
 
-    try {
+   // const exists = await db.select("").from().where()
 
-      const user = await getUser(req);
-      const user_id=user.userid;
-      const sub = await db.select("*").from("se_project.subsription").where("userid",user_id)
-      if(sub.length!=0){
-       
- 
-   
- 
- 
-      const tran={
-       amount:payedAmount ,
-       userid:user_id ,
-       purchasediid:purchasedId
-     };
-     console.log("tran",tran)
-      await db("se_project.transactions").insert(tran);
- 
-      const tic = {
-       origin:origin,
-       destination:destination,
-       userid:user_id,
-       tripdate:tripDate,
-       //subiD:null
-      };
-      console.log("tic",tic)
- 
-      await db("se_project.tickets").insert(tic);
+    const user = await getUser(req);
+    const user_id=user.userid;
+    const sub = await db.select("*").from("se_project.subsription").where("userid",user_id)
+    if(sub.length==0){
     
- 
-      const t_id = await db.select("id").from("se_project.tickets").where("origin",origin).andWhere("destination", destination)
-      .andWhere("userid",user_id).andWhere("tripdate",tripDate).then((rows) => rows.map((row) => row.id));
- 
-       console.log(t_id);
-      
- 
-      const r ={
-       status:"upcoming",
-       origin:origin,
-       destination:destination,
-       userid:user_id,
-       tripdate:tripDate,
-       ticketid:t_id[0]
-     };
-     console.log("r",r); 
-     await db("se_project.rides").insert(r);
-     return res.status(200).json({message: "ride added"}) ;     
- 
+    const tran={
+     amount:payedAmount ,
+     userid:user_id ,
+     purchase_type:"subsription",
+     purchasediid:purchasedId
+   };
+    n =0;
+   if(subType=="annual")
+      n=100;
+      else if(subType=="month")
+      n=10;
+      else if(subType=="quarterly")
+      n=50;
+
+
+    await db("se_project.transactions").insert(tran);
+
+    const s2 = {
+      subtype:subType,
+      zoneid:zoneId,
+      userid:user_id,
+      nooftickets:n
+    };
+
+    await db("se_project.subsription").insert(s2);
+  
+
+ }
+ else
+   return res.status(400).json({error: "you  have a subsription "}) ;     
+   } catch (e) {
+     console.log(e.message);
+
+     
    }
-   else
-     return res.status(400).json({error: "you Donot have a subsription "}) ;     
-     } catch (e) {
-       console.log(e.message);
- 
-       
-     }
- 
+
 
 
 });
-
-
+// payment for ticket online
   app.post("/api/v1/payment/ticket", auth , async function (req, res) {
-    const {purchasedId,creditCardNumber,holderName,payedAmount,origin,destination,tripDate }= req.body;
-    console.log(purchasedId,creditCardNumber,holderName,payedAmount,origin,destination,tripDate )
+    console.log("dcwc")
+    const {creditCardNumber,holderName,payedAmount,origin,destination,tripDate }= req.body;
+    console.log(creditCardNumber,holderName,payedAmount,origin,destination,tripDate )
     try {
-
+      
      const user = await getUser(req);
      const user_id=user.userid;
      const sub = await db.select("*").from("se_project.subsription").where("userid",user_id)
+     const s = "ticket"
      if(sub.length==0){
-      
-
-  
 
 
-     const tran={
-      amount:payedAmount ,
-      userid:user_id ,
-      purchasediid:purchasedId
-    };
-    console.log("tran",tran)
-     await db("se_project.transactions").insert(tran);
+      const ticketExists = await db.select("*").from("se_project.tickets")
+    .where({
+      userid: user_id,
+      origin: origin,
+      destination: destination,
+      tripdate : tripDate
+    })
+    if(ticketExists!=0){
+      return res.status(400).json({error: "ticketExists"}) ;     
+    }
+
 
      const tic = {
       origin:origin,
       destination:destination,
       userid:user_id,
-      tripdate:tripDate,
+      tripdate:tripDate
       //subiD:null
      };
      console.log("tic",tic)
@@ -504,6 +472,16 @@ async function alterPosition(affectedStations) {
     };
     console.log("r",r); 
     await db("se_project.rides").insert(r);
+    const tran={
+      amount:payedAmount ,
+      userid:user_id ,
+      purchasediid:t_id,
+      purchase_type:s,
+
+    };
+    console.log("tran",tran)
+     await db("se_project.transactions").insert(tran);
+
     return res.status(200).json({message: "ride added"}) ;     
 
   }
@@ -518,7 +496,242 @@ async function alterPosition(affectedStations) {
 
   });  
 
+  //Pay for ticket by subscription
+    app.post("/api/v1/tickets/purchase/subscription", auth , async function (req, res) {
+    const {subId,origin,destination,tripDate }= req.body;
+    console.log(subId,origin,destination,tripDate )
+    try{
+      const user = await getUser(req);
+      const user_id=user.userid;
+      let n = await db.select("nooftickets").from("se_project.subsription").where("userid",user_id)
+
+      .then((rows) => rows.map((row) => row.nooftickets));
+      console.log(n,n.length);
+      if(n.length==0){
+        return res.status(400).json({error: "you don't have a subsription "}) ;     
+        }
+        
+      else{
+        const ticketExists = await db.select("id").from("se_project.tickets")
+        .where({
+          userid: user_id,
+          origin: origin,
+          destination: destination,
+          tripdate : tripDate
+        }).then((rows) => rows.map((row) => row.id));
+        console.log(ticketExists);
+
+        if(ticketExists!=0){
+          return res.status(400).json({error: "ticketExists"}) ;     
+        }
+        console.log(n[0]);
+
+      if(n[0]==0){
+        return res.status(400).json({error: "you don't have a tickets left in your subsription "}) ;     
+      }
+      else{
+        n[0]=n[0]-1;
+        let id = await db.select("id").from("se_project.subsription").where("userid",user_id).then((rows) => rows.map((row) => row.id));     
+
+        await db("se_project.subsription")
+          .where({ "id": subId })
+          .update({ nooftickets: n[0] });
+
+          const tic = {
+            origin:origin,
+            destination:destination,
+            userid:user_id,
+            tripdate:tripDate,
+            subid:id[0]
+           };
+           console.log("tic",tic)
+      
+           await db("se_project.tickets").insert(tic);
+         
+
+           const t_id = await db.select("id").from("se_project.tickets")
+           .where({
+             userid: user_id,
+             origin: origin,
+             destination: destination,
+             tripdate : tripDate
+           }).then((rows) => rows.map((row) => row.id));     
+
+     const r ={
+      status:"upcoming",
+      origin:origin,
+      destination:destination,
+      userid:user_id,
+      tripdate:tripDate,
+      ticketid:t_id[0]
+    };
+    const s = "subsription"
+
+    console.log("r",r); 
+    await db("se_project.rides").insert(r);
+    const tran={
+      amount:5 ,
+      userid:user_id ,
+      purchasediid:t_id,
+      purchase_type:s,
+
+    };
+      
+          
+          return res.status(200).json({message: "tickets purchased"}) ;     
+
+            }      }}
+      catch (e) { console.log(e.message);
+      }
+        });
 
 
 
+
+
+  //-------------------------------------------------------------------------------------------------------------------------------
+  // 1st 3ars
+  //DONE
+//DONE price n2sa (refund ticket)
+app.post("/api/v1/refund/:ticketId" ,async function (req,res){
+  try {
+    const { ticketId } = req.params;
+
+    const ticket = await db
+      .select("*")
+      .from("se_project.tickets")
+      .where("id", ticketId);
+
+    const refundTicket = await db
+      .select("*")
+      .from("se_project.refund_requests")
+      .where("ticketid", ticketId);
+    if (ticket.length==0) {
+      return res.status(404).json({ error: "Ticket Not Found" });
+    }
+    if(refundTicket.length>0){
+      return res.status(400).json({ error: 'Refund Still Being Reviewed' });
+    }
+     
+    
+
+     const user = await getUser(req);
+    const datee = await db
+      .select("tripdate")
+      .from("se_project.tickets")
+      .where("id", ticketId).then((rows) => rows.map((row) => row.tripdate));
+    const currDate = new Date();
+    console.log(currDate,"-------"  ,datee[0])
+
+    if (datee[0] < currDate){
+      return res.status(400).json({ error: "Cannot refund past or current date tickets" });
+    };
+    //refundamount m3rfsh gaya mnen
+    const refundRequest = {
+      status: "pending",
+      userid: user.userid,
+      refundamount: "2",
+      ticketid: ticketId,
+    };
+
+    await db("se_project.refund_requests").insert(refundRequest);
+
+    return res.status(200).json({ message: "Ticket Is Added To Refund List." });
+
+
+  } catch (error) {
+    return res.status(400).json({ error: 'Failed to submit refund request' });
+
+  }
+
+});
+// senior request
+app.post("/api/v1/senior/request", async function (req,res)  {
   
+  const {nationalId} = req.body;
+  console.log(typeof(nationalId));
+  
+  const user = await getUser(req);
+
+  const requests_Exists = await db.select("status").from("se_project.senior_requests")
+  .where("userid",user.userid).then((rows) => rows.map((row) => row.status));
+ 
+  try {    
+    if(nationalId.length!=14){
+      return res.status(400).json({ error: 'nationalId should be 14 digit' }); 
+
+    }  
+    if(requests_Exists == "pending"){
+      return res.status(409).json({ error: 'Already Requsted ' }); 
+    }
+      const seniorrequests = {
+        status: "pending",
+        userid: user.userid,
+        nationalid:nationalId 
+     
+      };
+      console.log(seniorrequests)
+
+      await db("se_project.senior_requests").insert(seniorrequests);
+      return res.status(200).json({ message: "Request Submitted." });
+    
+    
+  } catch (error) {
+    return res.status(400).json({ error: 'Failed To Submit Request' });
+  }
+
+});
+
+//waiting for donia q(simulate ride)
+app.put("/api/v1/ride/simulate",async(req,res)=>{
+ 
+  const {origin , destination , tripDate} = req.body;
+  if (!origin || !destination || !tripDate) {
+    return res.status(400).json({ error: "Missing required fields" });
+  }
+  const user = await getUser(req);
+  
+  try {
+    const rideExists = await db.select("status").from("se_project.rides")
+    .where({
+      userid: user.id,
+      origin: origin,
+      destination: destination,
+      tripdate : tripDate
+    }).then((rows) => rows.map((row) => row.status));
+    
+    const id = await db.select("id").from("se_project.rides")
+    .where({
+      userid: user.id,
+      origin: origin,
+      destination: destination,
+      tripdate : tripDate
+    }).then((rows) => rows.map((row) => row.id));
+    //console.log("rideExists",rideExists);
+    //console.log("id",id);
+
+    if (id.length>0) {
+      
+      if (rideExists[0] === "Completed") {
+        res.status(200).json({ message: "Ride has already been completed" });
+      } else {
+        await db("se_project.rides")
+          .where({ "id": id[0] })
+          .update({ status: "Completed" });
+
+        return res.status(200).json({ message: "Ride simulated successfully" });
+      }
+    } else {
+      res.status(404).json({ message: "Ride not found" });
+    }
+  } catch (error) {
+    return res.status(500).json({ error: "Failed to simulate ride" });
+  } 
+
+});
+
+
+
+
+
+      }

@@ -13,7 +13,7 @@ const getUser = async function(req) {
     .innerJoin('se_project.roles', 'se_project.users.roleid', 'se_project.roles.id')
     .first();
   
-  console.log('user =>', user)
+ // console.log('user =>', user)
   user.isStudent = user.roleid === roles.student;
   user.isAdmin = user.roleid === roles.admin;
   user.isSenior = user.roleid === roles.senior;
@@ -25,7 +25,6 @@ module.exports = function(app) {
   // Register HTTP endpoint to render /users page
   app.get('/dashboard', async function(req, res) {
     const user = await getUser(req);
-    console.log(1)
     return res.render('dashboard', user);
   });
 
@@ -47,5 +46,36 @@ module.exports = function(app) {
     const routes = await db.select('*').from('se_project.routes');
     return res.render('routesManageing', { ...user, routes });
   });
+  app.get('/tickets', async function(req, res) {
+    const user = await getUser(req);
+    return res.render('tickets', { ...user });
+  });
+  app.get('/pay_online', async function(req, res) {
+    const user = await getUser(req);
+    return res.render('pay_online', { ...user });
+  });
+  app.get('/pay_online', async function(req, res) {
+    const user = await getUser(req);
+    return res.render('pay_online', { ...user });
+  });
+  app.get('/pay_by_subscription', async function(req, res) {
+    const user = await getUser(req);
+    return res.render('pay_by_subscription', { ...user });
+  });
+  //------------------------------------------------------------------------------------------------------------
+  // 1st 3ars
+  app.get("/requests/refund" , async (req,res) =>{
+    const user = await getUser(req);
+    const tickets = await db.select('*').from('se_project.tickets').where("userid", user.userid);
+    //console.log("ticket",tickets);
+    return res.render('refund_requests' ,  { ...user, tickets });
+  });
 
+  app.get("/requests/senior", async (req, res) => {
+    res.render("Senior_Request");
+  });
+
+  app.get("/rises/simulate" ,async(req,res)=>{
+    res.render("simulate_ride")
+  });
 };  
