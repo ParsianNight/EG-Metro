@@ -67,13 +67,16 @@ module.exports = function (app) {
     console.log('here3');
     
     try {
-    const{email, newPassword}= req.body;
+      const userr=getUser().userid;
+    
+
+    const{newPassword}= req.body;
   
     console.log(email +' '+ newPassword);
   
     // Find the user in the database by their email address
         await db("se_project.users") 
-        .where({email : email })
+        .where({userid : userr })
         .update({ password: newPassword })
         .then(() => {
           return res.status(200).json({ message: 'Password reset successfully' });
@@ -96,11 +99,9 @@ module.exports = function (app) {
     const db1=
     await db("se_project.zones") 
     .select("*")
-    
-      console.log(db1)
-      console.log("test")
+    return db1;
+      
       return res.status(200).json({message: "Zones Data are shown successfully"})
-
    } catch (err) 
     {
       
@@ -112,8 +113,9 @@ module.exports = function (app) {
 
   })
 
-//
-  app.post('/api/v1/payment/subsription', async (req,res)=>{
+  // Pay for subscription online 
+
+app.post('/api/v1/payment/subsription', async (req,res)=>{
 
     const {userId , subscriptionType  , ZoneId, PurchaseId} = req.body;
     // const userId = req.session.userId;
