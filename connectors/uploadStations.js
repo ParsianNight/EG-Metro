@@ -106,7 +106,6 @@ async function uploadR() {
     await db("se_project.routes").insert(element).returning("*");
   }
 }
-console.log("sdfgn")
 //uploadS();// first to run
 //uploadR();// second
 //uploadSR(); //third

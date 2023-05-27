@@ -2,12 +2,13 @@ const { isEmpty } = require("lodash");
 const { v4 } = require("uuid");
 const db = require("../../connectors/db");
 const roles = require("../../constants/roles");
-const {getSessionToken}=require('../../utils/session');
+const { getSessionToken } = require('../../utils/session');
 const auth = require("../../middleware/auth");
 const session = require("../../utils/session");
 const getUser = async function (req) {
-const sessionToken = getSessionToken(req);
-
+  const sessionToken = getSessionToken(req);
+  // toDo
+  // Add Authorization
   const user = await db
     .select("*")
     .from("se_project.sessions")
@@ -33,11 +34,11 @@ const sessionToken = getSessionToken(req);
 
 module.exports = function (app) {
   // example
-app.get("/users", auth , async function (req, res) {
+  app.get("/users", auth, async function (req, res) {
     try {
       const user = await getUser(req);
       const users = await db.select('*').from("se_project.users")
-        
+
       return res.status(200).json(users);
     } catch (e) {
       console.log(e.message);
