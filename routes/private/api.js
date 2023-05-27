@@ -522,5 +522,3 @@ async function alterPosition(affectedStations) {
 
 
   
-
-};
