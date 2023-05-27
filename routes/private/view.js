@@ -41,19 +41,23 @@ module.exports = function(app) {
     return res.render('stationsManageing', { ...user, stations });
   });
 
-  app.get("/requests/refund" , async (req,res) =>{
+  app.get('/manage/routes', async function(req, res) {
     const user = await getUser(req);
-    const tickets = await db.select('*').from('se_project.tickets').where("userid", user.userid);
-    //console.log("ticket",tickets);
-    return res.render('refund_requests' ,  { ...user, tickets });
+    const routes = await db.select('*').from('se_project.routes');
+    return res.render('routesManageing', { ...user, routes });
   });
 
-  app.get("/requests/senior", async (req, res) => {
-    res.render("Senior_Request");
+
+
+  app.get('/tickets', async function(req, res) {
+    const user = await getUser(req);
+
+    return res.render('tickets', { user });
   });
 
-  app.get("/rises/simulate" ,async(req,res)=>{
-    res.render("simulate_ride")
+  app.get('/subscription', async function(req, res) {
+    const user = await getUser(req);
+
+    return res.render('subscription', { user });
   });
- 
-};
+};  
