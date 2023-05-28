@@ -31,9 +31,9 @@ app.use(bodyParser.json());
     )
     .first();
 
-  user.isNormal = user.roleId === roles.user;
-  user.isAdmin = user.roleId === roles.admin;
-  user.isSenior = user.roleId === roles.senior;
+  user.isNormal = user.roleid === roles.user;
+  user.isAdmin = user.roleid === roles.admin;
+  user.isSenior = user.roleid === roles.senior;
   return user;
 };
 
@@ -63,42 +63,40 @@ module.exports = function (app) {
 
  
 // password reset 
-  app.put('/api/v1/password/reset', async(req, res) => {
-    console.log('here3');
-    
-    try {
-      const userr=getUser().userid;
-    
+app.put('/api/v1/password/reset', async(req, res) => {
+  try {
+    const userr = await getUser(req);
+    const userId = userr.userid;
+    const { newPassword, OldPassword } = req.body;
 
-    const{newPassword}= req.body;
-  
-    console.log(email +' '+ newPassword);
-  
-    // Find the user in the database by their email address
-        await db("se_project.users") 
-        .where({userid : userr })
-        .update({ password: newPassword })
-        .then(() => {
-          return res.status(200).json({ message: 'Password reset successfully' });
-      })
-        
-      .catch((err) => {
-        console.error(err.message);
-        return res.status(300).json({ error: 'Internal server error' });
-      });
-  
+    // Find the user in the database by their id from the session
+    const [user] = await db('se_project.users')
+      .where({ id: userId })
+      .select('password');
+
+    if (user.password !==OldPassword) {
+      return res.status(300).json({ message: 'Incorrect old Password' });
+    } else {
+      await db('se_project.users')
+        .where({ id: userId })
+        .update({ password: newPassword });
+
+      return res.status(200).json({ message: 'Password reset successfully' });
+    }
   } catch (error) {
-  console.error(error.message);
-      
-  }});
+    console.error(error.message);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 // get Zones
   app.get('/api/v1/zones',async (req,res) => {
    try {
     
     const db1=
-    await db("se_project.zones") 
+    await db
     .select("*")
+    .from("se_project.zones") 
     return db1;
       
       return res.status(200).json({message: "Zones Data are shown successfully"})
