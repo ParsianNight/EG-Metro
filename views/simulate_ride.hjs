@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Ride Simulation</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    form {
+      max-width: 400px;
+      margin: 0 auto;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    input[type="text"],
+    input[type="date"],
+    button[type="submit"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+
+    button[type="submit"] {
+      background-color: #4CAF50;
+      color: white;
+      cursor: pointer;
+    }
+
+    button[type="submit"]:hover {
+      background-color: #45a049;
+    }
+
+    .message {
+      margin-top: 10px;
+      padding: 10px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <h1>Ride Simulation</h1>
+
+  <form id="rideSimulationForm">
+    <label for="origin">Origin:</label>
+    <input type="text" id="origin" name="origin" required>
+
+    <label for="destination">Destination:</label>
+    <input type="text" id="destination" name="destination" required>
+
+    <label for="tripDate">Trip Date:</label>
+    <input type="date" id="tripDate" name="tripDate" required>
+
+    <button type="submit">Simulate Ride</button>
+  </form>
+
+  <div id="messageContainer" class="message"></div>
+
+  <script>
+    document.getElementById("rideSimulationForm").addEventListener("submit", function(event) {
+      event.preventDefault(); // Prevent form submission
+
+      const form = event.target;
+      const origin = form.elements.origin.value;
+      const destination = form.elements.destination.value;
+      const tripDate = form.elements.tripDate.value;
+
+      const requestOptions = {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ origin, destination, tripDate })
+      };
+
+      fetch("/api/v1/ride/simulate", requestOptions)
+        .then(response => response.json())
+        .then(data => {
+          const messageContainer = document.getElementById("messageContainer");
+          messageContainer.textContent = data.message || "An error occurred while simulating the ride. Please try again.";
+          messageContainer.classList.add(data.message ? "success" : "error");
+        })
+        .catch(error => {
+          console.error("Error:", error);
+          const messageContainer = document.getElementById("messageContainer");
+          messageContainer.textContent = "An error occurred while simulating the ride. Please try again.";
+          messageContainer.classList.add("error");
+        });
+    });
+  </script>
+</body>
+</html>

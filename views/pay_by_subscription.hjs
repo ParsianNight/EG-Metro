@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Ticket Purchase Subscription API</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+    }
+
+    h1 {
+      color: #333;
+      text-align: center;
+    }
+
+    form {
+      max-width: 400px;
+      margin: 0 auto;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    input[type="text"],
+    input[type="date"] {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      margin-bottom: 16px;
+    }
+
+    button[type="submit"] {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 16px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    button[type="submit"]:hover {
+      background-color: #45a049;
+    }
+
+    .error {
+      color: #ff0000;
+      margin-bottom: 16px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Ticket Purchase by Subscription</h1>
+  
+  <form id="purchaseForm">
+    <label for="subId">Subscription ID:</label>
+    <input type="text" id="subId" name="subId" required>
+    
+    <label for="origin">Origin:</label>
+    <input type="text" id="origin" name="origin" required>
+    
+    <label for="destination">Destination:</label>
+    <input type="text" id="destination" name="destination" required>
+    
+    <label for="tripDate">Trip Date:</label>
+    <input type="date" id="tripDate" name="tripDate" required>
+    
+    <button type="submit">Purchase Tickets</button>
+    <p id="errorMessage" class="error"></p>
+  </form>
+
+  <script>
+    const form = document.getElementById('purchaseForm');
+    const errorMessage = document.getElementById('errorMessage');
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      errorMessage.textContent = '';
+
+      const subId = document.getElementById('subId').value;
+      const origin = document.getElementById('origin').value;
+      const destination = document.getElementById('destination').value;
+      const tripDate = document.getElementById('tripDate').value;
+
+      try {
+        const response = await fetch('/api/v1/tickets/purchase/subscription', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ subId, origin, destination, tripDate })
+        });
+
+        const data = await response.json();
+        console.log(data);
+        
+        if (response.ok) {
+          alert('Tickets purchased successfully!');
+          // Additional actions after successful ticket purchase
+        } else {
+          errorMessage.textContent = data.error;
+          // Additional actions in case of an error
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        errorMessage.textContent = 'An error occurred. Please try again.';
+        // Additional error handling
+      }
+    });
+  </script>
+</body>
+</html>
