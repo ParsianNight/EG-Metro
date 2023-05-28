@@ -25,7 +25,7 @@
       font-weight: bold;
     }
 
-    input[type="text"],
+    select,
     input[type="date"],
     button[type="submit"] {
       width: 100%;
@@ -58,10 +58,20 @@
 
   <form id="rideSimulationForm">
     <label for="origin">Origin:</label>
-    <input type="text" id="origin" name="origin" required>
+    <select id="origin" name="origin" required>
+      <option value="" disabled selected>Select Origin</option>
+      {{#stationname}}
+        <option value="{{.}}">{{.}}</option>
+      {{/stationname}}
+    </select>
 
     <label for="destination">Destination:</label>
-    <input type="text" id="destination" name="destination" required>
+    <select id="destination" name="destination" required>
+      <option value="" disabled selected>Select Destination</option>
+      {{#stationname}}
+        <option value="{{.}}">{{.}}</option>
+      {{/stationname}}
+    </select>
 
     <label for="tripDate">Trip Date:</label>
     <input type="date" id="tripDate" name="tripDate" required>
@@ -72,6 +82,9 @@
   <div id="messageContainer" class="message"></div>
 
   <script>
+    const originDropdown = document.getElementById("origin");
+    const destinationDropdown = document.getElementById("destination");
+
     document.getElementById("rideSimulationForm").addEventListener("submit", function(event) {
       event.preventDefault(); // Prevent form submission
 
@@ -99,6 +112,29 @@
           messageContainer.textContent = "An error occurred while simulating the ride. Please try again.";
           messageContainer.classList.add("error");
         });
+    });
+
+    originDropdown.addEventListener("change", function() {
+      const selectedOrigin = this.value;
+      const destinationOptions = destinationDropdown.options;
+
+      for (let i = 0; i < destinationOptions.length; i++) {
+        const option = destinationOptions[i];
+        if (option.value === selectedOrigin) {
+          destinationOptions[i].disabled = true;
+          if (option.selected) {
+            // Select the first available option if the selected one is disabled
+            for (let j = 0; j < destinationOptions.length; j++) {
+              if (!destinationOptions[j].disabled) {
+                destinationOptions[j].selected = true;
+                break;
+              }
+            }
+          }
+        } else {
+          destinationOptions[i].disabled = false;
+        }
+      }
     });
   </script>
 </body>

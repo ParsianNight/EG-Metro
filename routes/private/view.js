@@ -76,6 +76,10 @@ module.exports = function(app) {
   });
 
   app.get("/rises/simulate" ,async(req,res)=>{
-    res.render("simulate_ride")
+    
+    const stationname = await db.select('stationname').
+    from('se_project.stations').then((rows) => rows.map((row) => row.stationname));
+    console.log(stationname);
+    res.render("simulate_ride" ,{stationname} );
   });
 };  
