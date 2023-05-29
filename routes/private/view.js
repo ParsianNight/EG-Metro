@@ -63,7 +63,7 @@ module.exports = function(app) {
     return res.render('pay_by_subscription', { ...user });
   });
   //------------------------------------------------------------------------------------------------------------
-  // 1st 3ars
+  
   app.get("/requests/refund" , async (req,res) =>{
     const user = await getUser(req);
     const tickets = await db.select('*').from('se_project.tickets').where("userid", user.userid);
@@ -76,6 +76,10 @@ module.exports = function(app) {
   });
 
   app.get("/rises/simulate" ,async(req,res)=>{
-    res.render("simulate_ride")
+
+    const stations = await db.select('stationname').from('se_project.stations').then((rows) => rows.map((row) => row.stationname));
+    console.log(stations)
+
+    res.render("simulate_ride",{stations})
   });
 };  
