@@ -737,7 +737,7 @@ function get_graph(stations, routes) {
     //graph.get(toStation.stationname).push(fromStation.stationname);
 
   }
-  console.log(graph);
+ // console.log(graph);
 
   return graph; 
 }
@@ -751,8 +751,8 @@ function get_way(Path){
   for(i in Path){
     output = output+Path[i]+ "->"
   }
-  console.log(output)
-  return output;
+  //console.log(output)
+  return  output.slice(0, -2);;
 }
 // check price
 app.post("/api/v1/tickets/price/:originId/:destinationId", async (req, res) => {
