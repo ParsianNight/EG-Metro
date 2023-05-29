@@ -654,7 +654,99 @@ app.put("/api/v1/ride/simulate",async(req,res)=>{
 });
 
 
+//--------------------------------------------------------------------
 
+function findShortestPath(graph, startNode, endNode) {
+  if (!graph.has(startNode) || !graph.has(endNode)) {
+    return null; 
+  }
+
+  const visited = new Set();
+  const queue = [[startNode, 0, [startNode]]]; 
+  while (queue.length > 0) {
+    const [currentNode, distance, path] = queue.shift();
+
+    if (currentNode === endNode) {
+      return path; 
+    }
+
+    if (!visited.has(currentNode)) {
+      visited.add(currentNode);
+
+      const neighbors = graph.get(currentNode);
+
+      for (const neighbor of neighbors) {
+        queue.push([neighbor, distance + 1, [...path, neighbor]]);
+      }
+    }
+  }
+
+  return null; 
+}
+
+function get_graph(stations, routes) {
+  const graph = new Map();
+
+  for (const station of stations) {
+    const nodeId = station.stationname;
+    graph.set(nodeId, []);
+  }
+
+  
+  for (const route of routes) {
+    const fromStationId = route.fromstationid;
+    const toStationId = route.tostationid;
+  
+    
+    let fromStation;
+    let toStation;
+  
+    for (const station of stations) {
+      if (station.id === fromStationId) {
+        fromStation = station.stationname;
+      }
+      if (station.id === toStationId) {
+        toStation = station.stationname;
+      }
+    }
+    //const fromStation = stations.find((station) => station.stationname === `s${fromStationId}`);
+    //const toStation = stations.find((station) => station.stationname === `s${toStationId}`);
+    //console.log("fromStation:" , fromStation);
+    //console.log("toStation: ",toStation );
+
+    graph.get(fromStation).push(toStation);
+    //graph.get(toStation.stationname).push(fromStation.stationname);
+
+  }
+  console.log(graph);
+
+  return graph; 
+}
+
+app.post("/api/v1/tickets/price/:originId/:destinationId", async (req, res) => {
+  const { originId, destinationId } = req.params;
+
+  const stations = await db.select("*").from("se_project.stations");
+  const routes = await db.select("*").from("se_project.routes");
+
+  const originId_name = await db
+    .select("stationname")
+    .from("se_project.stations")
+    .where("id", originId)
+    .then((rows) => rows.map((row) => row.stationname));
+  const destinationId_name = await db
+    .select("stationname")
+    .from("se_project.stations")
+    .where("id", destinationId)
+    .then((rows) => rows.map((row) => row.stationname));
+
+  const graph = get_graph(stations, routes);
+
+  const Path = findShortestPath(graph, originId_name[0], destinationId_name[0]);
+  let distance = Path.length;
+  
+  return res.status(200).json({ message: 'Path', Path , distance });
+});
 
 
       }
