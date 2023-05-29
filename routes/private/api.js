@@ -269,23 +269,7 @@ async function alterPosition(affectedStations) {
 
   });
 
-//check price
-  app.post("/api/v1/tickets/price/:originId:destinationId",async function (req, res)  { 
-   // const user = await getUser(req)
-   const origin =parseInt(req.params.originId);
-   console.log(origin,typeof origin)
-   const destination =parseInt(req.params.destinationId);
-   console.log(destination)
 
-       let visited_stations=[]
-    try{
-      
-    
- } catch(e){
-   console.log(e.message);
-   return res.status(400).send("Could not get price");
-}
-  });
 
 // payment FOR sub
 
@@ -343,7 +327,6 @@ app.post("/api/v1/payment/subscription", auth , async function (req, res) {
 });
 // payment for ticket online
   app.post("/api/v1/payment/ticket", auth , async function (req, res) {
-    console.log("dcwc")
     const {creditCardNumber,holderName,payedAmount,origin,destination,tripDate }= req.body;
     console.log(creditCardNumber,holderName,payedAmount,origin,destination,tripDate )
     try {
@@ -374,7 +357,7 @@ app.post("/api/v1/payment/subscription", auth , async function (req, res) {
       tripdate:tripDate
       //subiD:null
      };
-     console.log("tic",tic)
+    //  console.log("tic",tic)
 
      await db("se_project.tickets").insert(tic);
    
@@ -382,7 +365,7 @@ app.post("/api/v1/payment/subscription", auth , async function (req, res) {
      const t_id = await db.select("id").from("se_project.tickets").where("origin",origin).andWhere("destination", destination)
      .andWhere("userid",user_id).andWhere("tripdate",tripDate).then((rows) => rows.map((row) => row.id));
 
-      console.log(t_id);
+      // console.log(t_id);
      
 
      const r ={
@@ -393,7 +376,7 @@ app.post("/api/v1/payment/subscription", auth , async function (req, res) {
       tripdate:tripDate,
       ticketid:t_id[0]
     };
-    console.log("r",r); 
+    // console.log("r",r); 
     await db("se_project.rides").insert(r);
     const tran={
       amount:payedAmount ,
@@ -402,10 +385,31 @@ app.post("/api/v1/payment/subscription", auth , async function (req, res) {
       purchase_type:s,
 
     };
-    console.log("tran",tran)
+    // console.log("tran",tran)
      await db("se_project.transactions").insert(tran);
 
-    return res.status(200).json({message: "ride added"}) ;     
+     //---------------------------
+
+     const stations = await db.select("*").from("se_project.stations");
+    const routes = await db.select("*").from("se_project.routes");
+  
+    // console.log(origin,"---",destination)
+  const Path = get_path(stations,routes,origin,destination) 
+  // console.log(Path)
+  let distance = Path.length;
+  let price =0;
+  if(distance<=9){
+      price = await db.select("price").from("se_project.zones").where("zonetype","1").then((rows) => rows.map((row) => row.price));
+  }
+  else if(distance>9 && distance<=16){
+    price = await db.select("price").from("se_project.zones").where("zonetype","2").then((rows) => rows.map((row) => row.price));
+}
+else if(distance<=9){
+  price = await db.select("price").from("se_project.zones").where("zonetype","3").then((rows) => rows.map((row) => row.price));
+}
+let way=get_way(Path)
+// console.log( 'price:',price[0] )  
+return res.status(200).json({ message: 'Path: '+way+' price: '+price[0] +"pounds"});
 
   }
   else
@@ -422,14 +426,14 @@ app.post("/api/v1/payment/subscription", auth , async function (req, res) {
   //Pay for ticket by subscription
     app.post("/api/v1/tickets/purchase/subscription", auth , async function (req, res) {
     const {subId,origin,destination,tripDate }= req.body;
-    console.log(subId,origin,destination,tripDate )
+    // console.log(subId,origin,destination,tripDate )
     try{
       const user = await getUser(req);
       const user_id=user.userid;
       let n = await db.select("nooftickets").from("se_project.subsription").where("userid",user_id)
 
       .then((rows) => rows.map((row) => row.nooftickets));
-      console.log(n,n.length);
+      // console.log(n,n.length);
       if(n.length==0){
         return res.status(400).json({error: "you don't have a subsription "}) ;     
         }
@@ -442,12 +446,12 @@ app.post("/api/v1/payment/subscription", auth , async function (req, res) {
           destination: destination,
           tripdate : tripDate
         }).then((rows) => rows.map((row) => row.id));
-        console.log(ticketExists);
+        // console.log(ticketExists);
 
         if(ticketExists!=0){
           return res.status(400).json({error: "ticketExists"}) ;     
         }
-        console.log(n[0]);
+        // console.log(n[0]);
 
       if(n[0]==0){
         return res.status(400).json({error: "you don't have a tickets left in your subsription "}) ;     
@@ -467,7 +471,7 @@ app.post("/api/v1/payment/subscription", auth , async function (req, res) {
             tripdate:tripDate,
             subid:id[0]
            };
-           console.log("tic",tic)
+          //  console.log("tic",tic)
       
            await db("se_project.tickets").insert(tic);
          
@@ -490,7 +494,7 @@ app.post("/api/v1/payment/subscription", auth , async function (req, res) {
     };
     const s = "subsription"
 
-    console.log("r",r); 
+    // console.log("r",r); 
     await db("se_project.rides").insert(r);
     const tran={
       amount:5 ,
@@ -500,20 +504,36 @@ app.post("/api/v1/payment/subscription", auth , async function (req, res) {
 
     };
       
-          
-          return res.status(200).json({message: "tickets purchased"}) ;     
+    const stations = await db.select("*").from("se_project.stations");
+    const routes = await db.select("*").from("se_project.routes");
+  
+    // console.log(origin,"---",destination)
+  const Path = get_path(stations,routes,origin,destination) 
+  // console.log(Path)
+  let distance = Path.length;
+  let price =0;
+  if(distance<=9){
+      price = await db.select("price").from("se_project.zones").where("zonetype","1").then((rows) => rows.map((row) => row.price));
+  }
+  else if(distance>9 && distance<=16){
+    price = await db.select("price").from("se_project.zones").where("zonetype","2").then((rows) => rows.map((row) => row.price));
+}
+else if(distance<=9){
+  price = await db.select("price").from("se_project.zones").where("zonetype","3").then((rows) => rows.map((row) => row.price));
+}
+let way=get_way(Path)
+// console.log( 'price:',price[0] )  
+console.log(  'Path: '+way+' price: '+price[0] +"pounds")
+return res.status(200).json({ message: 'Path: '+way+' price: '+price[0] +" pounds"});
+  
+          // return res.status(200).json({message: "tickets purchased"}) ;     
 
             }      }}
       catch (e) { console.log(e.message);
       }
         });
 
-
-
-
-
   //-------------------------------------------------------------------------------------------------------------------------------
-  // 1st 3ars
   //DONE
 //DONE price n2sa (refund ticket)
 app.post("/api/v1/refund/:ticketId" ,async function (req,res){
@@ -660,7 +680,6 @@ function findShortestPath(graph, startNode, endNode) {
   if (!graph.has(startNode) || !graph.has(endNode)) {
     return null; 
   }
-
   const visited = new Set();
   const queue = [[startNode, 0, [startNode]]]; 
   while (queue.length > 0) {
@@ -722,30 +741,49 @@ function get_graph(stations, routes) {
 
   return graph; 
 }
-
+function get_path  (stations,routes,originId_name,destinationId_name){ 
+  const graph = get_graph(stations, routes);
+   const Path = findShortestPath(graph, originId_name, destinationId_name);
+  return Path
+}
+function get_way(Path){
+  let output ="";
+  for(i in Path){
+    output = output+Path[i]+ "->"
+  }
+  console.log(output)
+  return output;
+}
+// check price
 app.post("/api/v1/tickets/price/:originId/:destinationId", async (req, res) => {
   const { originId, destinationId } = req.params;
-
-  const stations = await db.select("*").from("se_project.stations");
-  const routes = await db.select("*").from("se_project.routes");
-
-  const originId_name = await db
-    .select("stationname")
-    .from("se_project.stations")
-    .where("id", originId)
-    .then((rows) => rows.map((row) => row.stationname));
-  const destinationId_name = await db
-    .select("stationname")
-    .from("se_project.stations")
-    .where("id", destinationId)
-    .then((rows) => rows.map((row) => row.stationname));
-
-  const graph = get_graph(stations, routes);
-
-  const Path = findShortestPath(graph, originId_name[0], destinationId_name[0]);
-  let distance = Path.length;
+    const stations = await db.select("*").from("se_project.stations");
+    const routes = await db.select("*").from("se_project.routes");
   
-  return res.status(200).json({ message: 'Path', Path , distance });
+    const originId_name = await db
+      .select("stationname")
+      .from("se_project.stations")
+      .where("id", originId)
+      .then((rows) => rows.map((row) => row.stationname));
+    const destinationId_name = await db
+      .select("stationname")
+      .from("se_project.stations")
+      .where("id", destinationId)
+      .then((rows) => rows.map((row) => row.stationname));
+
+  const Path = get_path(stations,routes,originId_name[0],destinationId_name[0]) //findShortestPath(graph, originId_name[0], destinationId_name[0]);
+  let distance = Path.length;
+  let price =0;
+  if(distance<=9){
+      price = await db.select("price").from("se_project.zones").where("zonetype","1").then((rows) => rows.map((row) => row.price));
+  }
+  else if(distance>9 && distance<=16){
+    price = await db.select("price").from("se_project.zones").where("zonetype","2").then((rows) => rows.map((row) => row.price));
+}
+else if(distance<=9){
+  price = await db.select("price").from("se_project.zones").where("zonetype","3").then((rows) => rows.map((row) => row.price));
+}
+  return res.status(200).json({ message: 'Path', Path , distance,'price:':price[0] });
 });
 
 

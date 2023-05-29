@@ -14,8 +14,4 @@ module.exports = function(app) {
     return res.render('register', { stations });
   });
 
-  app.get('/prices', async function(req, res) {
-
-    return res.render('prices');
-  });
 };

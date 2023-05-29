@@ -50,9 +50,13 @@ module.exports = function(app) {
     const user = await getUser(req);
     return res.render('tickets', { ...user });
   });
-  app.get('/pay_online', async function(req, res) {
+  app.get('/prices', async function(req, res) {
     const user = await getUser(req);
-    return res.render('pay_online', { ...user });
+    const tickets = await db.select('*').from('se_project.tickets').where("userid", user.userid);
+    const stations = await db.select('stationname').from('se_project.stations').then((rows) => rows.map((row) => row.stationname));
+    console.log(stations)
+
+        return res.render('prices',  { ...user, tickets,stations });
   });
   app.get('/pay_online', async function(req, res) {
     const user = await getUser(req);
@@ -67,19 +71,15 @@ module.exports = function(app) {
   app.get("/requests/refund" , async (req,res) =>{
     const user = await getUser(req);
     const tickets = await db.select('*').from('se_project.tickets').where("userid", user.userid);
-    //console.log("ticket",tickets);
     return res.render('refund_requests' ,  { ...user, tickets });
   });
-
   app.get("/requests/senior", async (req, res) => {
+    const user = await getUser(req);
     res.render("Senior_Request");
   });
-
   app.get("/rises/simulate" ,async(req,res)=>{
-
     const stations = await db.select('stationname').from('se_project.stations').then((rows) => rows.map((row) => row.stationname));
     console.log(stations)
-
     res.render("simulate_ride",{stations})
   });
 };  
