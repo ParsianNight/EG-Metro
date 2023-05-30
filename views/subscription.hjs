@@ -65,6 +65,7 @@
     }
   </style>
 </head>
+
 <body>
   <h1>Subscription Payment</h1>
   <form id="subscriptionForm">
@@ -94,7 +95,91 @@
     <p class="error-message" id="errorMessage"></p>
     <p class="success-message" id="successMessage"></p>
   </form>
+  <head>
+  <title>Zones</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      font-family: Arial, sans-serif;
+    }
 
+    .container {
+      max-width: 600px;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 10px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
+      background-color: #f5f5f5;
+    }
+
+    .station-name-input,
+    .station-type-input {
+      width: 100%;
+      padding: 5px;
+    }
+
+    .station-name-input {
+      display: none;
+    }
+
+    #message {
+      margin-top: 20px;
+      color: green;
+      text-align: center;
+    }
+  </style>
+</head>
+  <div class="container">
+    <h1>Zones</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>Zone ID</th>
+          <th>Zone Type</th>
+          <th>Price</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#zones}}
+        <tr>
+          <td>{{id}}</td>
+          <td>
+            <span class="station-name">{{zonetype}}</span>
+            <input type="text" class="form-control station-name-input" value="{{origin}}" style="display: none;">
+          </td>
+          <td>
+            <span class="station-type">{{price}}</span>
+            <select id="destination" name="destination" class="station-type-input" style="display: none;"></select>
+          </td>
+        </tr>
+        {{/zones}}
+      </tbody>
+    </table>
+    <p id="message"></p>
+  </div>
   <script>
     document.getElementById("subscriptionForm").addEventListener("submit", async function(event) {
       event.preventDefault();

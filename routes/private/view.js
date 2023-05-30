@@ -68,7 +68,8 @@ module.exports = function(app) {
   });
   app.get('/subscriptions', async function(req, res) {
     const user = await getUser(req);
-    return res.render('subscription', { ...user });
+    const zones=await db.select("*").from("se_project.zones") 
+    return res.render('subscription', { ...user ,zones});
   });
   //------------------------------------------------------------------------------------------------------------
   
@@ -85,5 +86,8 @@ module.exports = function(app) {
     const stations = await db.select('stationname').from('se_project.stations').then((rows) => rows.map((row) => row.stationname));
     console.log(stations)
     res.render("simulate_ride",{stations})
-  });
+});
+
+  
+
 };  

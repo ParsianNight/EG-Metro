@@ -805,4 +805,27 @@ return res.status(200).json({ message: price[0] +"pounds"});
 });
 
 
-      }
+  //------------------------------------------------------------------------------------------------------------
+
+  app.get('/api/v1/zones',async (req,res) => {
+    try {
+     
+     const db1=
+     await db
+     .select("*")
+     .from("se_project.zones") 
+     console.log(db1)
+     return db1;
+       
+       return res.status(200).json({message: "Zones Data are shown successfully"})
+    } catch (err) 
+     {
+       
+       console.error(err.message);
+       return res.status(300).json({ error: 'could not retunr zones' });
+    }
+     
+  
+  
+   });
+}
