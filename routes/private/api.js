@@ -269,7 +269,7 @@ async function alterPosition(affectedStations) {
 
   });
 
-
+//------------------------------------------------------------------------------------------------------------------
 
 // payment FOR sub
 
@@ -570,13 +570,31 @@ app.post("/api/v1/refund/:ticketId" ,async function (req,res){
       return res.status(400).json({ error: "Cannot refund past or current date tickets" });
     };
     //refundamount m3rfsh gaya mnen
+    const stations = await db.select("*").from("se_project.stations");
+    const routes = await db.select("*").from("se_project.routes");
+    const origin = ticket[0].origin
+    const destination = ticket[0].destination
+      console.log(origin,"--",destination)
+  const Path = get_path(stations,routes,origin,destination) 
+   console.log(Path)
+  let distance = Path.length;
+  let price =0;
+  if(distance<=9){
+      price = await db.select("price").from("se_project.zones").where("zonetype","1").then((rows) => rows.map((row) => row.price));
+  }
+  else if(distance>9 && distance<=16){
+    price = await db.select("price").from("se_project.zones").where("zonetype","2").then((rows) => rows.map((row) => row.price));
+}
+else if(distance<=9){
+  price = await db.select("price").from("se_project.zones").where("zonetype","3").then((rows) => rows.map((row) => row.price));
+}
     const refundRequest = {
       status: "pending",
       userid: user.userid,
-      refundamount: "2",
+      refundamount: price[0],
       ticketid: ticketId,
     };
-
+    console.log(refundRequest)
     await db("se_project.refund_requests").insert(refundRequest);
 
     return res.status(200).json({ message: "Ticket Is Added To Refund List." });
@@ -755,7 +773,7 @@ function get_way(Path){
   return  output.slice(0, -2);;
 }
 // check price
-app.post("/api/v1/tickets/price/:originId/:destinationId", async (req, res) => {
+app.get("/api/v1/tickets/price/:originId/:destinationId", async (req, res) => {
   const { originId, destinationId } = req.params;
     const stations = await db.select("*").from("se_project.stations");
     const routes = await db.select("*").from("se_project.routes");
@@ -783,7 +801,7 @@ app.post("/api/v1/tickets/price/:originId/:destinationId", async (req, res) => {
 else if(distance<=9){
   price = await db.select("price").from("se_project.zones").where("zonetype","3").then((rows) => rows.map((row) => row.price));
 }
-  return res.status(200).json({ message: 'Path', Path , distance,'price:':price[0] });
+return res.status(200).json({ message: price[0] +"pounds"});
 });
 
 

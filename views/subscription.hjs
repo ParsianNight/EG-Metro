@@ -107,7 +107,7 @@
         payedAmount: form.elements["payedAmount"].value,
         subType: form.elements["subType"].value,
         zoneId: form.elements["zoneId"].value
-      };
+      }; 
 
       try {
         const response = await fetch("/api/v1/payment/subscription", {

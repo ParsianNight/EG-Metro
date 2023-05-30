@@ -58,10 +58,20 @@
 
   <form id="rideSimulationForm">
     <label for="origin">Origin:</label>
-    <select id="origin" name="origin" required></select>
+    <select id="origin" name="origin" required>
+      <option value="" disabled selected>Select Origin</option>
+      {{#stations}}
+        <option value="{{.}}">{{.}}</option>
+      {{/stations}}
+    </select>
 
     <label for="destination">Destination:</label>
-    <select id="destination" name="destination" required></select>
+    <select id="destination" name="destination" required>
+      <option value="" disabled selected>Select Destination</option>
+      {{#stations}}
+        <option value="{{.}}">{{.}}</option>
+      {{/stations}}
+    </select>
 
     <label for="tripDate">Trip Date:</label>
     <input type="date" id="tripDate" name="tripDate" required>
@@ -71,32 +81,10 @@
 
   <div id="messageContainer" class="message"></div>
 
-    <script src="yourScript.js"></script>
- <script>
-    // Assuming you have the 'stations' array in your JavaScript code
-    var stations = <%= JSON.stringify(stations) %>;
+  <script>
+    const originDropdown = document.getElementById("origin");
+    const destinationDropdown = document.getElementById("destination");
 
-    // Function to populate the dropdown with options
-    function populateDropdown(dropdownId) {
-      var dropdown = document.getElementById(dropdownId);
-
-      stations.forEach(function (station) {
-        var optionElement = document.createElement("option");
-        optionElement.value = station.stationname;
-        optionElement.text = station.stationname;
-        dropdown.appendChild(optionElement);
-      });
-    }
-
-    // Call the function to populate both origin and destination dropdowns
-    populateDropdown("origin");
-    populateDropdown("destination");
-
-    // Call the function to populate both origin and destination dropdowns
-    populateDropdown("origin");
-    populateDropdown("destination");
-
-    // Rest of your code for form submission and API request handling
     document.getElementById("rideSimulationForm").addEventListener("submit", function(event) {
       event.preventDefault(); // Prevent form submission
 
@@ -124,6 +112,29 @@
           messageContainer.textContent = "An error occurred while simulating the ride. Please try again.";
           messageContainer.classList.add("error");
         });
+    });
+
+    originDropdown.addEventListener("change", function() {
+      const selectedOrigin = this.value;
+      const destinationOptions = destinationDropdown.options;
+
+      for (let i = 0; i < destinationOptions.length; i++) {
+        const option = destinationOptions[i];
+        if (option.value === selectedOrigin) {
+          destinationOptions[i].disabled = true;
+          if (option.selected) {
+            // Select the first available option if the selected one is disabled
+            for (let j = 0; j < destinationOptions.length; j++) {
+              if (!destinationOptions[j].disabled) {
+                destinationOptions[j].selected = true;
+                break;
+              }
+            }
+          }
+        } else {
+          destinationOptions[i].disabled = false;
+        }
+      }
     });
   </script>
 </body>

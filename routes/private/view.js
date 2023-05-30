@@ -53,7 +53,7 @@ module.exports = function(app) {
   app.get('/prices', async function(req, res) {
     const user = await getUser(req);
     const tickets = await db.select('*').from('se_project.tickets').where("userid", user.userid);
-    const stations = await db.select('stationname').from('se_project.stations').then((rows) => rows.map((row) => row.stationname));
+    const stations = await db.select('*').from('se_project.stations')
     console.log(stations)
 
         return res.render('prices',  { ...user, tickets,stations });
@@ -66,6 +66,10 @@ module.exports = function(app) {
     const user = await getUser(req);
     return res.render('pay_by_subscription', { ...user });
   });
+  app.get('/subscriptions', async function(req, res) {
+    const user = await getUser(req);
+    return res.render('subscription', { ...user });
+  });
   //------------------------------------------------------------------------------------------------------------
   
   app.get("/requests/refund" , async (req,res) =>{
@@ -77,7 +81,7 @@ module.exports = function(app) {
     const user = await getUser(req);
     res.render("Senior_Request");
   });
-  app.get("/rises/simulate" ,async(req,res)=>{
+  app.get("/rides/simulate" ,async(req,res)=>{
     const stations = await db.select('stationname').from('se_project.stations').then((rows) => rows.map((row) => row.stationname));
     console.log(stations)
     res.render("simulate_ride",{stations})
