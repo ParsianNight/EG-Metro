@@ -761,7 +761,7 @@ function get_graph(stations, routes) {
 function get_path  (stations,routes,originId_name,destinationId_name){ 
   const graph = get_graph(stations, routes);
    const Path = findShortestPath(graph, originId_name, destinationId_name);
-   console.log(Path)
+  //  console.log(Path)
   return Path
 }
 function get_way(Path){
