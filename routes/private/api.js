@@ -534,8 +534,7 @@ return res.status(200).json({ message: 'Path: '+way+' price: '+price[0] +" pound
         });
 
   //-------------------------------------------------------------------------------------------------------------------------------
-  //DONE
-//DONE price n2sa (refund ticket)
+// (refund ticket)
 app.post("/api/v1/refund/:ticketId" ,async function (req,res){
   try {
     const { ticketId } = req.params;
@@ -643,7 +642,7 @@ app.post("/api/v1/senior/request", async function (req,res)  {
 
 });
 
-//waiting for donia q(simulate ride)
+//(simulate ride)
 app.put("/api/v1/ride/simulate",async(req,res)=>{
  
   const {origin , destination , tripDate} = req.body;
@@ -774,6 +773,7 @@ function get_way(Path){
 }
 // check price
 app.get("/api/v1/tickets/price/:originId/:destinationId", async (req, res) => {
+  try{
   const { originId, destinationId } = req.params;
     const stations = await db.select("*").from("se_project.stations");
     const routes = await db.select("*").from("se_project.routes");
@@ -802,30 +802,38 @@ else if(distance<=9){
   price = await db.select("price").from("se_project.zones").where("zonetype","3").then((rows) => rows.map((row) => row.price));
 }
 return res.status(200).json({ message: price[0] +"pounds"});
+}
+catch (error) {
+  return res.status(400).json({ error: 'Failed to check price' });
+
+}
+
+
+
+
 });
 
 
   //------------------------------------------------------------------------------------------------------------
+//get zone
+app.get('/api/v1/zones',async (req,res) => {
+  try {
+   
+   const db1=
+   await db
+   .select("*")
+   .from("se_project.zones") 
+  
+     
+     return res.status(200).send(db1);
+  } catch (err) 
+   {
+     
+     console.error(err.message);
+     return res.status(300).json({ error: 'could not retunr zones' });
+  }
+   
 
-  app.get('/api/v1/zones',async (req,res) => {
-    try {
-     
-     const db1=
-     await db
-     .select("*")
-     .from("se_project.zones") 
-     console.log(db1)
-     return db1;
-       
-       return res.status(200).json({message: "Zones Data are shown successfully"})
-    } catch (err) 
-     {
-       
-       console.error(err.message);
-       return res.status(300).json({ error: 'could not retunr zones' });
-    }
-     
-  
-  
-   });
+
+ });
 }
