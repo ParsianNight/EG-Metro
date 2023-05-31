@@ -754,13 +754,14 @@ function get_graph(stations, routes) {
     //graph.get(toStation.stationname).push(fromStation.stationname);
 
   }
- // console.log(graph);
+ //console.log(graph);
 
   return graph; 
 }
 function get_path  (stations,routes,originId_name,destinationId_name){ 
   const graph = get_graph(stations, routes);
    const Path = findShortestPath(graph, originId_name, destinationId_name);
+   console.log(Path)
   return Path
 }
 function get_way(Path){

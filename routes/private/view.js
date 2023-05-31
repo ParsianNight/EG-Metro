@@ -54,17 +54,19 @@ module.exports = function(app) {
     const user = await getUser(req);
     const tickets = await db.select('*').from('se_project.tickets').where("userid", user.userid);
     const stations = await db.select('*').from('se_project.stations')
-    console.log(stations)
 
         return res.render('prices',  { ...user, tickets,stations });
   });
   app.get('/pay_online', async function(req, res) {
     const user = await getUser(req);
-    return res.render('pay_online', { ...user });
+    const stations = await db.select('*').from('se_project.stations')
+    console.log(stations)
+    return res.render('pay_online', { ...user ,stations});
   });
   app.get('/pay_by_subscription', async function(req, res) {
     const user = await getUser(req);
-    return res.render('pay_by_subscription', { ...user });
+    const stations = await db.select('*').from('se_project.stations')
+    return res.render('pay_by_subscription', { ...user,stations });
   });
   app.get('/subscriptions', async function(req, res) {
     const user = await getUser(req);
