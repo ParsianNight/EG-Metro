@@ -97,9 +97,9 @@ app.put('/api/v1/password/reset', async(req, res) => {
     await db
     .select("*")
     .from("se_project.zones") 
-    return db1;
+   
       
-      return res.status(200).json({message: "Zones Data are shown successfully"})
+      return res.status(200).send(db1);
    } catch (err) 
     {
       
