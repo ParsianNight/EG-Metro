@@ -13,7 +13,7 @@ const getUser = async function(req) {
     .innerJoin('se_project.roles', 'se_project.users.roleid', 'se_project.roles.id')
     .first();
   
-  console.log('user =>', user)
+ // console.log('user =>', user)
   user.isStudent = user.roleid === roles.student;
   user.isAdmin = user.roleid === roles.admin;
   user.isSenior = user.roleid === roles.senior;
@@ -25,7 +25,6 @@ module.exports = function(app) {
   // Register HTTP endpoint to render /users page
   app.get('/dashboard', async function(req, res) {
     const user = await getUser(req);
-    console.log(1)
     return res.render('dashboard', user);
   });
 
@@ -47,5 +46,53 @@ module.exports = function(app) {
     const routes = await db.select('*').from('se_project.routes');
     return res.render('routesManageing', { ...user, routes });
   });
+  app.get('/tickets', async function(req, res) {
+    const user = await getUser(req);
+    return res.render('tickets', { ...user });
+  });
+  app.get('/prices', async function(req, res) {
+    const user = await getUser(req);
+    const tickets = await db.select('*').from('se_project.tickets').where("userid", user.userid);
+    const stations = await db.select('*').from('se_project.stations')
+
+        return res.render('prices',  { ...user, tickets,stations });
+  });
+  app.get('/pay_online', async function(req, res) {
+    const user = await getUser(req);
+    const stations = await db.select('*').from('se_project.stations')
+    console.log(stations)
+    return res.render('pay_online', { ...user ,stations});
+  });
+  app.get('/pay_by_subscription', async function(req, res) {
+    const user = await getUser(req);
+    const stations = await db.select('*').from('se_project.stations')
+    return res.render('pay_by_subscription', { ...user,stations });
+  });
+  app.get('/subscriptions', async function(req, res) {
+    const user = await getUser(req);
+   // const zones=await db.select("*").from("se_project.zones") 
+    return res.render('subscription', { ...user });
+  });
+  app.get("/subscriptions", async (req, res) => {
+    return res.render("GetZones");
+  });
+  //------------------------------------------------------------------------------------------------------------
+  
+  app.get("/requests/refund" , async (req,res) =>{
+    const user = await getUser(req);
+    const tickets = await db.select('*').from('se_project.tickets').where("userid", user.userid);
+    return res.render('refund_requests' ,  { ...user, tickets });
+  });
+  app.get("/requests/senior", async (req, res) => {
+    const user = await getUser(req);
+    res.render("Senior_Request");
+  });
+  app.get("/rides/simulate" ,async(req,res)=>{
+    const stations = await db.select('stationname').from('se_project.stations').then((rows) => rows.map((row) => row.stationname));
+    console.log(stations)
+    res.render("simulate_ride",{stations})
+});
+
+  
 
 };  

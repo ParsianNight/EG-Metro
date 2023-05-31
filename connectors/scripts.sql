@@ -88,9 +88,10 @@ CREATE TABLE IF NOT EXISTS se_project.rides
 CREATE TABLE IF NOT EXISTS se_project.transactions
 (
     id SERIAL NOT NULL,
-    amount INTEGER NOT NULL,
+    amount float NOT NULL,
     userid INTEGER NOT NULL,
-    purchasedIid text NOT NULL,
+    purchase_type text NOT NULL,
+    purchasedIid text ,
     FOREIGN KEY( userid ) REFERENCES se_project.users,
     CONSTRAINT transactions_pkey PRIMARY KEY (id)
 );
@@ -110,7 +111,7 @@ CREATE TABLE IF NOT EXISTS se_project.senior_requests
     id SERIAL NOT NULL,
     status text NOT NULL,
     userid Integer NOT NULL,
-    nationalid INTEGER not null,
+    nationalid BIGINT not null,
     FOREIGN KEY( userid ) REFERENCES se_project.users,
     CONSTRAINT senior_requests_pkey PRIMARY KEY (id)
 );

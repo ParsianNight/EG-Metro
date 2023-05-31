@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>check price</title>
+  <title>Ride Simulation</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -54,14 +54,14 @@
   </style>
 </head>
 <body>
-  <h1>check price</h1>
+  <h1>Ride Simulation</h1>
 
   <form id="rideSimulationForm">
     <label for="origin">Origin:</label>
     <select id="origin" name="origin" required>
       <option value="" disabled selected>Select Origin</option>
       {{#stations}}
-        <option value="{{id}}">{{stationname}}</option>
+        <option value="{{.}}">{{.}}</option>
       {{/stations}}
     </select>
 
@@ -69,12 +69,14 @@
     <select id="destination" name="destination" required>
       <option value="" disabled selected>Select Destination</option>
       {{#stations}}
-        <option value="{{id}}">{{stationname}}</option>
+        <option value="{{.}}">{{.}}</option>
       {{/stations}}
     </select>
 
-    
-    <button type="submit">check price</button>
+    <label for="tripDate">Trip Date:</label>
+    <input type="date" id="tripDate" name="tripDate" required>
+
+    <button type="submit">Simulate Ride</button>
   </form>
 
   <div id="messageContainer" class="message"></div>
@@ -89,19 +91,15 @@
       const form = event.target;
       const origin = form.elements.origin.value;
       const destination = form.elements.destination.value;
-
-
-   
+      const tripDate = form.elements.tripDate.value;
 
       const requestOptions = {
-        method: "GET",
-        headers: { "Content-Type": "application/json" }
-              
-        };
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ origin, destination, tripDate })
+      };
 
-
-
-      fetch("/api/v1/tickets/price/"+origin+"/"+destination, requestOptions)
+      fetch("/api/v1/ride/simulate", requestOptions)
         .then(response => response.json())
         .then(data => {
           const messageContainer = document.getElementById("messageContainer");
