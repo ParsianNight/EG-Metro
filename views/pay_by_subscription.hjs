@@ -1,136 +1,214 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Ticket Purchase by Subscription </title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 40px;
-    }
-.select-container {
-      width: 415px;
-    }
-    .select-container select {
-      width: 100%;
-      height: 30px;
-      font-size: 16px;
-    }
-    h1 {
-      color: #333;
-      text-align: center;
-    }
+    <title>Ticket Payment</title>
+    <style>
+        .select-container {
+            width: 415px;
+        }
+        
+        .select-container select {
+            width: 100%;
+            height: 30px;
+            font-size: 16px;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        
+        h1 {
+            text-align: center;
+        }
+        
+        form {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 10px;
+        }
+        
+        input[type="text"],
+        input[type="date"] {
+            width: 100%;
+            padding: 5px;
+            margin-bottom: 10px;
+        }
+        
+        input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+        
+        #responseMessage {
+            margin-top: 20px;
+            text-align: center;
+            font-weight: bold;
+        }
+        #linkedlist {
+            text-align: center;
+            margin-top: 20px;
+        }
+          .circle {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background-color: #45a049;
+            display: inline-block;
+            margin-right: 20px;
+            text-align: center;
+            line-height: 100px;
+            color: white;
+            font-weight: bold;
+        }
 
-    form {
-      max-width: 400px;
-      margin: 0 auto;
-    }
+        .arrow {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 2px;
+            background-color: black;
+        }
 
-    label {
-      display: block;
-      margin-bottom: 8px;
-    }
+        .arrow::after {
+            content: "";
+            position: absolute;
+            top: -9px;
+            left: 50px; /* Update left property to position the arrow on the left side */
+            width: 0;
+            height: 0;
+            border-top: 10px solid transparent;
+            border-bottom: 10px solid transparent;
+            border-left: 15px solid black; /* Update border-left property to create the arrow on the left side */
+}
 
-    input[type="text"],
-    input[type="date"] {
-      width: 100%;
-      padding: 8px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      margin-bottom: 16px;
-    }
-
-    button[type="submit"] {
-      background-color: #4CAF50;
-      color: white;
-      padding: 10px 16px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      width: 100%;
-    }
-
-    button[type="submit"]:hover {
-      background-color: #45a049;
-    }
-
-    .error {
-      color: #ff0000;
-      margin-bottom: 16px;
-    }
-  </style>
+    </style>
 </head>
 <body>
-  <h1>Ticket Purchase by Subscription</h1>
-  
-  <form id="purchaseForm">
-    <label for="subId">Subscription ID:</label>
-    <input type="text" id="subId" name="subId" required>
-  
-    <div class="select-container">
-    <label for="origin">Origin:</label>
-    <select id="origin" name="origin" required>
-      <option value="" disabled selected>Select Origin</option>
-      {{#stations}}
-        <option value="{{id}}">{{stationname}}</option>
-      {{/stations}}
-    </select>
-  </div>
-    <div class="select-container">
+    <h1>Ticket Payment</h1>
+    <form id="paymentForm">
+        <label for="subid">Subscription ID:</label>
+    <input type="text" id="subid" name="subid" required>
 
-    <label for="destination">Destination:</label>
-    <select id="destination" name="destination" required>
-      <option value="" disabled selected>Select Destination</option>
-      {{#stations}}
-        <option value="{{id}}">{{stationname}}</option>
-      {{/stations}}
-    </select>
-  </div>
+        <div class="select-container">
+            <label for="origin">Origin:</label>
+            <select id="origin" name="origin" required>
+                <option value="" disabled selected>Select Origin</option>
+                {{#stations}}
+                <option value="{{stationname}}">{{stationname}}</option>
+                {{/stations}}
+            </select>
+        </div>
+        <div class="select-container">
 
-    <label for="tripDate">Trip Date:</label>
-    <input type="date" id="tripDate" name="tripDate" required>
+            <label for="destination">Destination:</label>
+            <select id="destination" name="destination" required>
+                <option value="" disabled selected>Select Destination</option>
+                {{#stations}}
+                <option value="{{stationname}}">{{stationname}}</option>
+                {{/stations}}
+            </select>
+        </div>
+
+        <label for="tripDate">Trip Date:</label>
+        <input type="date" id="tripDate" name="tripDate" required>
+
+        <input type="submit" value="Submit" >
+    </form>
+
+    <div id="responseMessage"></div>
+
+  <div id="hiddenDiv"style="display: none;">
+ </div>
+         <div id="linkedlist"></div>
+
+    <script>
+         function redirectToView1() {
+  handleData(data.number,data.pp);
+    }
     
-    <button type="submit">Purchase Tickets</button>
-    <p id="errorMessage" class="error"></p>
-  </form>
+function showDiv() {
+  event.preventDefault(); 
+      var div = document.getElementById("hiddenDiv");
+      div.style.display = "block";
+    }
+    
+        document.getElementById("paymentForm").addEventListener("submit", function (event) {
+            event.preventDefault();
+            showDiv();
+            const subid = document.getElementById('subid').value;
+            const origin = document.getElementById("origin").value;
+            const destination = document.getElementById("destination").value;
+            const tripDate = document.getElementById("tripDate").value;
 
-  <script>
-    const form = document.getElementById('purchaseForm');
-    const errorMessage = document.getElementById('errorMessage');
+            const payload = {
+                subid: subid,
+              
+                origin: origin,
+                destination: destination,
+                tripDate: tripDate
+            };
 
-    form.addEventListener('submit', async (event) => {
-      event.preventDefault();
-      errorMessage.textContent = '';
-
-      const subId = document.getElementById('subId').value;
-      const origin = document.getElementById('origin').value;
-      const destination = document.getElementById('destination').value;
-      const tripDate = document.getElementById('tripDate').value;
-
-      try {
-        const response = await fetch('/api/v1/tickets/purchase/subscription', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ subId, origin, destination, tripDate })
+            fetch("/api/v1/tickets/purchase/subscription", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(payload)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    const responseMessage = document.getElementById("responseMessage");
+                    if (data.error) {
+                        responseMessage.textContent = data.error;
+                    } else {
+                        responseMessage.textContent = data.message;
+                        handleData(parseInt(data.Number),data.pp)
+                    }
+                })
+                .catch(error => {
+                    console.error(error);
+                    const responseMessage = document.getElementById("responseMessage");
+                    responseMessage.textContent = "An error occurred during the request.";
+                });
         });
+        function handleData(distance, way) {
+            // Update nodeCount and nodeNames
+            var nodeCount = distance;
+            var nodeNames =way;
 
-        const data = await response.json();
-        console.log(data);
-        
-        if (response.ok) {
-          alert('Tickets purchased successfully!');
-          // Additional actions after successful ticket purchase
-        } else {
-          errorMessage.textContent = data.error;
-          // Additional actions in case of an error
+            var linkedList = document.getElementById("linkedlist");
+            linkedList.innerHTML = '';
+
+            for (var i = 0; i < nodeCount; i++) {
+                var circle = document.createElement("div");
+                circle.className = "circle";
+                circle.textContent = nodeNames[i] || "Node " + (i + 1);
+                linkedList.appendChild(circle);
+
+                if (i < nodeCount - 1) {
+                    var arrow = document.createElement("div");
+                    arrow.className = "arrow";
+                    linkedList.appendChild(arrow);
+                }
+            }
         }
-      } catch (error) {
-        console.error('Error:', error);
-        errorMessage.textContent = 'An error occurred. Please try again.';
-        // Additional error handling
-      }
-    });
-  </script>
+
+
+    </script>
+
 </body>
 </html>

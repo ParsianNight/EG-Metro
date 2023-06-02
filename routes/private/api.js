@@ -417,7 +417,7 @@ let way=get_way(Path)
 // console.log( 'price:',price[0] )  
 
 
-return res.status(200).json({ message: 'Path: '+way+' price: '+price[0] +"pounds"});
+return res.status(200).json({ message: 'Path: '+way+' price: '+price[0] +"pounds",Number: distance,pp:Path} );
 
   }
   else
@@ -433,7 +433,7 @@ return res.status(200).json({ message: 'Path: '+way+' price: '+price[0] +"pounds
 
   //Pay for ticket by subscription
     app.post("/api/v1/tickets/purchase/subscription", auth , async function (req, res) {
-    const {subId,origin,destination,tripDate }= req.body;
+    const {subid,origin,destination,tripDate }= req.body;
     // console.log(subId,origin,destination,tripDate )
     try{
       const user = await getUser(req);
@@ -469,7 +469,7 @@ return res.status(200).json({ message: 'Path: '+way+' price: '+price[0] +"pounds
         let id = await db.select("id").from("se_project.subsription").where("userid",user_id).then((rows) => rows.map((row) => row.id));     
 
         await db("se_project.subsription")
-          .where({ "id": subId })
+          .where({ "id": subid })
           .update({ nooftickets: n[0] });
 
           const tic = {
@@ -531,8 +531,8 @@ else if(distance<=9){
 }
 let way=get_way(Path)
 // console.log( 'price:',price[0] )  
-console.log(  'Path: '+way+' price: '+price[0] +"pounds")
-return res.status(200).json({ message: 'Path: '+way+' price: '+price[0] +" pounds"});
+//console.log(  'Path: '+way+' price: '+price[0] +"pounds")
+return res.status(200).json({ message: 'Path: '+way+' price: '+price[0] +"pounds",Number: distance,pp:Path} );
   
           // return res.status(200).json({message: "tickets purchased"}) ;     
 
@@ -576,7 +576,6 @@ app.post("/api/v1/refund/:ticketId" ,async function (req,res){
     if (datee[0] < currDate){
       return res.status(400).json({ error: "Cannot refund past or current date tickets" });
     };
-    //refundamount m3rfsh gaya mnen
     const stations = await db.select("*").from("se_project.stations");
     const routes = await db.select("*").from("se_project.routes");
     const origin = ticket[0].origin
