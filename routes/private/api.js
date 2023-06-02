@@ -158,6 +158,8 @@ async function alterPosition(affectedStations) {
                 
               };
               const route = await db("se_project.routes").insert(newRoute).returning("*");
+              var routeStation = await db("se_project.stationroutes").insert({stationid: fromID,routeid: route[0].id}).returning("");
+              routeStation = await db("se_project.stationroutes").insert({stationid: toID,routeid: route[0].id}).returning("");
             }
           }
           affectedStations.add(toID)
@@ -207,6 +209,10 @@ async function alterPosition(affectedStations) {
       };
       console.log(newRoute)
       const route = await db("se_project.routes").insert(newRoute).returning("*");
+
+      var routeStation = await db("se_project.stationroutes").insert({stationid: fromID,routeid: route[0].id}).returning("");
+      routeStation = await db("se_project.stationroutes").insert({stationid: toID,routeid: route[0].id}).returning("");
+
       await alterPosition(new Set([req.body.toStationId,req.body.fromStationId]))
 
       res.status(201).json(route);
@@ -409,6 +415,8 @@ else if(distance<=9){
 }
 let way=get_way(Path)
 // console.log( 'price:',price[0] )  
+
+
 return res.status(200).json({ message: 'Path: '+way+' price: '+price[0] +"pounds"});
 
   }

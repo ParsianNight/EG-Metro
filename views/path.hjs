@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Linked List View</title>
+    <style>
+        /* CSS styles */
+
+        .circle {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background-color: blue;
+            display: inline-block;
+            margin-right: 20px;
+            text-align: center;
+            line-height: 100px;
+            color: white;
+            font-weight: bold;
+        }
+
+        .arrow {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 2px;
+            background-color: black;
+        }
+
+        .arrow::after {
+            content: "";
+            position: absolute;
+            top: -9px;
+            right: -px;
+            width: 0;
+            height: 0;
+            border-top: 10px solid transparent;
+            border-bottom: 10px solid transparent;
+            border-right: 15px solid black;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button id="showButton">Show Nodes</button>
+        <div id="linkedlist"></div>
+    </div>
+
+    <script>
+        function showNodes() {
+            // Fetch data from the API
+            fetch("/api/v1/payment/ticket")
+                .then(response => response.json())
+                .then(data => {
+                    // Call a function to handle the retrieved data
+                    handleData(data.distance, data.way);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+
+        function handleData(distance, way) {
+            // Update nodeCount and nodeNames
+            var nodeCount = distance;
+            var nodeNames = way;
+
+            var linkedList = document.getElementById("linkedlist");
+            linkedList.innerHTML = '';
+
+            for (var i = 0; i < nodeCount; i++) {
+                var circle = document.createElement("div");
+                circle.className = "circle";
+                circle.textContent = nodeNames[i] || "Node " + (i + 1);
+                linkedList.appendChild(circle);
+
+                if (i < nodeCount - 1) {
+                    var arrow = document.createElement("div");
+                    arrow.className = "arrow";
+                    linkedList.appendChild(arrow);
+                }
+            }
+        }
+
+        document.getElementById("showButton").addEventListener("click", function() {
+            showNodes();
+        });
+    </script>
+</body>
+</html>

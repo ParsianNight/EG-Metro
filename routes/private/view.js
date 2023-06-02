@@ -60,9 +60,13 @@ module.exports = function(app) {
   app.get('/pay_online', async function(req, res) {
     const user = await getUser(req);
     const stations = await db.select('*').from('se_project.stations')
-    console.log(stations)
     return res.render('pay_online', { ...user ,stations});
   });
+  app.get('/path', async function(req, res) {
+    const user = await getUser(req);
+    return res.render('path', { ...user});
+  });
+
   app.get('/pay_by_subscription', async function(req, res) {
     const user = await getUser(req);
     const stations = await db.select('*').from('se_project.stations')
