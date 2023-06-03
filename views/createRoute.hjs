@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>EG-Metro</title>
+    <link rel='stylesheet' href='/styles/bootstrap.min.css' />
+    <link rel='stylesheet' href='/styles/style.css' />
+    <script src="/js/jquery-2.2.0.min.js" type="text/javascript"></script>
+    <script src="/js/bootstrap.min.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <div>
+      <div>
+        <nav class="navbar navbar-inverse" style="padding-left:130px;">
+          <ul class="nav navbar-nav">
+            <li><a href="/dashboard">Home</a></li>
+            <li class="active"><a href="/manage/routes">Routes</a></li>
+            <li><a href="/users">Users</a></li>
+            <li><a href="/users/add">Add Users</a></li>
+            <li><a href="/">Logout</a></li>       
+          </ul>
+        </nav>
+      </div>
+      <br/>
+     
+     
+      {{#isAdmin}}
+      <div style="text-align: center; ">
+        <button id="btnAddRoute" class="btn btn-primary" style="position:center; ">Add Route</button>
+        <br />
+        <div id="addRouteForm" style="display: none;">
+          <label for="fromStation">From Station id :</label>
+          <input type="text" id="fromStation" name="fromStation" class="form-control" />
+          <br />
+          <label for="toStation">To Station id:</label>
+          <input type="text" id="toStation" name="toStation" class="form-control" />
+          <br />
+          <label for="routeName">Route Name :</label>
+          <input type="text" id="routeName" name="routeName" class="form-control" />
+          <br />
+          <button id="btnSaveRoute" class="btn btn-primary">Save</button>
+          <button id="btnCancel" class=".btn btn-secondary">Cancel</button>
+        </div>
+      </div>
+      {{/isAdmin}}
+    </div>
+   
+    <script>
+      // Add event listener for Add Route button
+      $("#btnAddRoute").on("click", function() {
+        $("#addRouteForm").toggle();
+      });
+
+      // Add event listener for Save Route button
+$("#btnSaveRoute").on("click", function() {
+  var fromStationId = $("#fromStation").val();
+  var toStationId = $("#toStation").val();
+  var routeName = $("#routeName").val();
+    console.log(fromStationId)
+    console.log( $("#fromStation").val())
+  // Perform validation here if necessary
+
+  // Create the data object to send in the AJAX request
+  var data = {
+    fromStationId: fromStationId,
+    toStationId: toStationId,
+    routeName: routeName
+  };
+    console.log(data)
+  $.ajax({
+    url: "/api/v1/route",
+    type: "POST",
+    data: data,
+    success: function(response) {
+      // Handle the success response here
+      console.log("Route created successfully:", response);
+      location.reload()
+    },
+        error: function(xhr, status, error) {
+      // Handle the error response here
+      console.log("Error occurred:", error);
+      // You can display an error message to the user or perform any necessary actions
+        }
+     }); 
+  });
+
+  
+
+    </script>
+  </body>
+</html>

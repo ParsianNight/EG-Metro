@@ -46,6 +46,17 @@ module.exports = function(app) {
     const routes = await db.select('*').from('se_project.routes');
     return res.render('routesManageing', { ...user, routes });
   });
+  app.get("/manage/stations/create" ,async(req,res)=>{
+    const user = await getUser(req);
+  
+    res.render("createStation",{...user})
+  });
+  
+  app.get("/manage/routes/create" ,async(req,res)=>{
+    const user = await getUser(req);
+  
+    res.render("createRoute",{...user})
+  });
   app.get('/tickets', async function(req, res) {
     const user = await getUser(req);
     return res.render('tickets', { ...user });
