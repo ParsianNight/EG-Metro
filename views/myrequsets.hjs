@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Refund Request</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 20px;
+      }
+      .container {
+        max-width: 800px; /* Adjust the width as needed */
+        margin: 0 auto;
+        background-color: #fff;
+        border-radius: 5px;
+        padding: 20px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        text-align: center;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+      }
+      th,
+      td {
+        padding: 8px;
+        border-bottom: 1px solid #ddd;
+        text-align: left;
+      }
+      .station-name-input,
+      .station-type-input,
+      .station-status-input {
+        width: 100%;
+      }
+      .btn {
+        padding: 6px 12px;
+        margin-bottom: 0;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 1.42857143;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: middle;
+        -ms-touch-action: manipulation;
+        touch-action: manipulation;
+        cursor: pointer;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        background-image: none;
+        border: 1px solid transparent;
+        border-radius: 4px;
+      }
+      .btn-danger {
+        color: #fff;
+        background-color: #d9534f;
+        border-color: #d43f3a;
+      }
+      .btn-success {
+        color: #fff;
+        background-color: #5cb85c;
+        border-color: #4cae4c;
+      }
+      .btn-secondary {
+        color: #fff;
+        background-color: #6c757d;
+        border-color: #6c757d;
+      }
+    </style>
+    <style>
+    .navbar-container {
+        background-color: #333;
+        color: #fff;
+        padding: 10px 20px;
+        font-family: Arial, sans-serif;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+    }
+
+    .navbar {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .navbar li {
+        display: inline-block;
+        margin-right: 10px;
+    }
+
+    .navbar li a {
+        color: #fff;
+        text-decoration: none;
+        padding: 5px 10px;
+    }
+
+    .navbar li a:hover {
+        background-color: #555;
+        border-radius: 5px;
+    }
+</style>
+
+<div class="navbar-container">
+    <ul class="navbar">
+        <li><a href="/subscriptions">Subscriptions</a></li>
+        <li><a href="/tickets">Tickets</a></li>
+        <li><a href="/prices">Prices</a></li>
+        <li><a href="/rides/simulate">Rides</a></li>
+        <li><a href="/requests/refund">Request Refund</a></li>
+        <li><a href="/requests/senior">Request Senior</a></li>
+        <li><a href="/">Logout</a></li>
+    </ul>
+</div>
+
+    <script>
+      // Function to handle the form submission
+      function submitRefundRequest(ticketId) {
+        fetch(`/api/v1/refund/${ticketId}`, {
+          method: "POST",
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            const messageContainer = document.getElementById("message");
+            if (data.error) {
+              messageContainer.textContent = `Error: ${data.error}`;
+            } else if (data.message) {
+              messageContainer.textContent = data.message;
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
+    </script>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Refund Request</h1>
+      <table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Status</th>
+      <th>User ID</th>
+      <th>Refund Amount</th>
+      <th>Ticket ID</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#requests}}
+    <tr>
+      <td>{{id}}</td>
+      <td>
+        <span class="status">{{status}}</span>
+        <select id="status" name="status" class="status-input" style="display: none;">
+          <option value="pending">Pending</option>
+          <option value="approved">Approved</option>
+          <option value="rejected">Rejected</option>
+        </select>
+      </td>
+      <td>
+        <span class="userid">{{userid}}</span>
+      </td>
+      <td>
+        <span class="refundamount">{{refundamount}}</span>
+        <input type="text" class="form-control refundamount-input" value="{{refundamount}}" style="display: none;">
+      </td>
+      <td>
+        <span class="ticketid">{{ticketid}}</span>
+      </td>
+      
+    </tr>
+    {{/requests}}
+  </tbody>
+</table>
+
+      <p id="message"></p>
+    </div>
+  </body>
+</html>

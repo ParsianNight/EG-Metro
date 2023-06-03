@@ -62,10 +62,6 @@ module.exports = function(app) {
     const stations = await db.select('*').from('se_project.stations')
     return res.render('pay_online', { ...user ,stations});
   });
-  app.get('/path', async function(req, res) {
-    const user = await getUser(req);
-    return res.render('path', { ...user});
-  });
 
   app.get('/pay_by_subscription', async function(req, res) {
     const user = await getUser(req);
@@ -87,6 +83,12 @@ module.exports = function(app) {
     const tickets = await db.select('*').from('se_project.tickets').where("userid", user.userid);
     return res.render('refund_requests' ,  { ...user, tickets });
   });
+  app.get("/myrequsets",async(req,res)=>{
+    const user = await getUser(req);
+    const requests = await db.select('*').from('se_project.refund_requests').where("userid", user.userid);
+    console.log(requests)
+    return res.render('myrequsets' ,  { ...user, requests });
+});
   app.get("/requests/senior", async (req, res) => {
     const user = await getUser(req);
     res.render("Senior_Request");
