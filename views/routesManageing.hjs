@@ -46,7 +46,7 @@ body {
 <div class="navbar-container">
     <ul class="navbar">
         <li><a href="/manage/stations">Manage Stations</a></li>
-        <li><a href="/manage/routes">Manage Route</a></li>
+        <li><a class="active" href="/manage/routes">Manage Route</a></li>
         <li><a href="/manage/requests/refunds">Manage Refunds</a></li>
         <li><a href="/manage/requests/seniors">Manage Seniors</a></li>
         <li><a href="/manage/zones">Manage Zones</a></li>

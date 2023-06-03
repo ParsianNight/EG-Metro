@@ -69,7 +69,7 @@
 <div class="navbar-container">
     <ul class="navbar">
         <li><a href="/subscriptions">Subscriptions</a></li>
-        <li><a href="/tickets">Tickets</a></li>
+        <li><a class="active" href="/tickets">Tickets</a></li>
         <li><a href="/prices">Prices</a></li>
         <li><a href="/rides/simulate">Rides</a></li>
         <li><a href="/requests/refund">Request Refund</a></li>
