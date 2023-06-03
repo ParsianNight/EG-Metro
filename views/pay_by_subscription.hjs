@@ -94,9 +94,53 @@
             border-bottom: 10px solid transparent;
             border-left: 15px solid black; /* Update border-left property to create the arrow on the left side */
 }
+    .navbar-container {
+        background-color: #333;
+        color: #fff;
+        padding: 10px 20px;
+        font-family: Arial, sans-serif;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+    }
 
-    </style>
-</head>
+    .navbar {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .navbar li {
+        display: inline-block;
+        margin-right: 10px;
+    }
+
+    .navbar li a {
+        color: #fff;
+        text-decoration: none;
+        padding: 5px 10px;
+    }
+
+    .navbar li a:hover {
+        background-color: #555;
+        border-radius: 5px;
+    }
+</style>
+
+</style>
+<div class="navbar-container">
+    <ul class="navbar">
+        <li><a href="/subscriptions">Subscriptions</a></li>
+        <li><a href="/tickets">Tickets</a></li>
+        <li><a href="/prices">Prices</a></li>
+        <li><a href="/rides/simulate">Rides</a></li>
+        <li><a href="/requests/refund">Request Refund</a></li>
+        <li><a href="/requests/senior">Request Senior</a></li>
+        <li><a href="/">Logout</a></li>
+    </ul>
+</div>
+
 <body>
     <h1>Ticket Payment</h1>
     <form id="paymentForm">

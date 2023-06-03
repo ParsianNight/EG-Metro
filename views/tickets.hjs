@@ -34,7 +34,7 @@
 </head>
 <body>
 
-  <h1>Button Example</h1>
+  <h1>buying ticket</h1>
   
   <div class="button-container">
     <button onclick="redirectToView1()">pay online</button>
