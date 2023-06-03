@@ -55,11 +55,11 @@ body {
 </style>
 <div class="navbar-container">
     <ul class="navbar">
-        <li><a href="/manage/stations">Manage_Stations</a></li>
-        <li><a href="/manage/routes">Manage_Route</a></li>
-        <li><a href="/manage/requests/refunds">Manage_Refunds</a></li>
-        <li><a href="/manage/requests/seniors">Manage_Seniors</a></li>
-        <li><a href="/manage/zones">Manage_Zones</a></li>
+        <li><a href="/manage/stations">Manage Stations</a></li>
+        <li><a href="/manage/routes">Manage Route</a></li>
+        <li><a href="/manage/requests/refunds">Manage Refunds</a></li>
+        <li><a href="/manage/requests/seniors">Manage Seniors</a></li>
+        <li><a href="/manage/zones">Manage Zones</a></li>
         <li><a href="/">Logout</a></li>
     </ul>
 </div>
@@ -113,7 +113,7 @@ body {
         </thead>
       </table>
     </div>
-    
+    <button class="btn btn-primary" onclick="window.location.href = '/manage/stations/create';"> Create station</button>
     <script>
      
 
