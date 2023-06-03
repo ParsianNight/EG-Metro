@@ -7,6 +7,40 @@
     <script src="/js/jquery-2.2.0.min.js" type="text/javascript"></script>
     <script src="/js/bootstrap.min.js" type="text/javascript"></script>
   </head>
+  <style>
+    .navbar-container {
+        background-color: #333;
+        color: #fff;
+        padding: 00px 20px;
+        font-family: Arial, sans-serif;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+    }
+
+    .navbar {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .navbar li {
+        display: inline-block;
+        margin-right: 10px;
+    }
+
+    .navbar li a {
+        color: #fff;
+        text-decoration: none;
+        padding: 5px 10px;
+    }
+
+    .navbar li a:hover {
+        background-color: #555;
+        border-radius: 5px;
+    }
+</style>
   <body>
       <script>
       $(document).ready(function() {
@@ -17,20 +51,24 @@
       });
       </script> 
     <div>
-      <div>
-        <nav class="navbar navbar-inverse" style="padding-left:130px;">
-      <ul class="nav navbar-nav">
-        <li><a href="/subscriptions">subscriptions</a></li>
-        <li><a href="/tickets">tickets</a></li>
-        <li><a href="/prices">prices</a></li>
-        <li><a href="/rides/simulate">rides</a></li>
-        <li><a href="/requests/refund">request_refund</a></li>
-        <li><a href="/requests/senior">requset_senior</a></li>
+     
 
-        <li><a href="/">Logout</a></li>  
-      </ul>
-  </nav>
-      </div>
+<div class="navbar-container">
+    <ul class="navbar">
+        <li><a href="/subscriptions">Subscriptions</a></li>
+        <li><a href="/tickets">Tickets</a></li>
+        <li><a href="/prices">Prices</a></li>
+        <li><a href="/rides/simulate">Rides</a></li>
+        <li><a href="/requests/refund">Request Refund</a></li>
+        <li><a href="/requests/senior">Request Senior</a></li>
+        <li><a href="/">Logout</a></li>
+    </ul>
+</div>
+<br>
+<br>
+<br>
+<br>
+
       <p>Welcome {{firstName}}, you are logged in!</p>
     </div>
   </body>
