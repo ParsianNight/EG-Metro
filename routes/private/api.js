@@ -210,8 +210,8 @@ async function alterPosition(affectedStations) {
       console.log(newRoute)
       const route = await db("se_project.routes").insert(newRoute).returning("*");
 
-      var routeStation = await db("se_project.stationroutes").insert({stationid: fromID,routeid: route[0].id}).returning("");
-      routeStation = await db("se_project.stationroutes").insert({stationid: toID,routeid: route[0].id}).returning("");
+      var routeStation = await db("se_project.stationroutes").insert({stationid: req.body.fromStationId,routeid: route[0].id}).returning("");
+      routeStation = await db("se_project.stationroutes").insert({stationid: req.body.toStationId,routeid: route[0].id}).returning("");
 
       await alterPosition(new Set([req.body.toStationId,req.body.fromStationId]))
 
@@ -221,7 +221,6 @@ async function alterPosition(affectedStations) {
       res.status(400).send("Error occurred, please recheck the data you entered!");
     }
   });
-
   // update route
   app.put("/api/v1/route/:id", async function (req, res) {
     try {

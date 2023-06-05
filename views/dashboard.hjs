@@ -6,8 +6,8 @@
     <link rel='stylesheet' href='/styles/style.css' />
     <script src="/js/jquery-2.2.0.min.js" type="text/javascript"></script>
     <script src="/js/bootstrap.min.js" type="text/javascript"></script>
-    {{!-- <link rel="icon" href="views\logo\download.png" type="image/png">
-<link rel="shortcut icon" href="views/logo/logo.png" type="image/png"> --}}
+    <link rel="icon" href="images\logo.png" type="image/png">
+<link rel="shortcut icon" href="images\logo.png" type="image/png">
   </head>
   <style>
     .navbar-container {
