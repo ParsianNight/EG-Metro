@@ -62,8 +62,8 @@ body {
         <thead>
           <tr>
             <th scope="col">ID</th>
-            <th scope="col">From Station id </th>
-            <th scope="col">To Station id </th>
+            <th scope="col">From Station </th>
+            <th scope="col">To Station  </th>
             <th scope="col">Name</th>
             <th scope="col">Actions</th> <!-- Added column for actions -->
           </tr>
@@ -72,8 +72,8 @@ body {
           {{#routes}}
           <tr>
             <td>{{id}}</td>
-            <td>{{fromstationid}}</td>
-            <td>{{tostationid}}</td>
+            <td>{{s1Name}}</td>
+            <td>{{s2Name}}</td>
             <td>
               <span class="route-name">{{routename}}</span>
               <input type="text" class="form-control route-name-input" value="{{routename}}" style="display: none;">
@@ -88,7 +88,6 @@ body {
           {{/routes}}
         </tbody>
       </table>
-
   
 <button class="btn btn-primary" onclick="window.location.href = '/manage/routes/create';"> Create routes</button>
 

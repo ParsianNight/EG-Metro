@@ -43,9 +43,13 @@ module.exports = function(app) {
 
   app.get('/manage/routes', async function(req, res) {
     const user = await getUser(req);
-    const routes = await db.select('*').from('se_project.routes');
+    const routes = await db.select('se_project.routes.id','routename','s1.stationname as s1Name','s2.stationname as s2Name')
+    .from('se_project.routes')
+    .innerJoin('se_project.stations as s1','s1.id','se_project.routes.tostationid')
+    .innerJoin('se_project.stations as s2','s2.id','se_project.routes.fromstationid');
+
     return res.render('routesManageing', { ...user, routes });
-  });
+  }); 
   app.get("/manage/stations/create" ,async(req,res)=>{
   const user = await getUser(req);
 

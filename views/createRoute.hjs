@@ -60,18 +60,30 @@ body {
      
       <br/>
      
-     
-      {{#isAdmin}}
+     {{#isAdmin}}
       <div style="text-align: center; ">
         <button id="btnAddRoute" class="btn btn-primary" style="position:center; ">Add Route</button>
         <br />
         <div id="addRouteForm" style="display: none;">
-          <label for="fromStation">From Station id :</label>
-          <input type="text" id="fromStation" name="fromStation" class="form-control" />
-          <br />
-          <label for="toStation">To Station id:</label>
-          <input type="text" id="toStation" name="toStation" class="form-control" />
-          <br />
+           <div class="select-container">
+            <label for="origin">Origin:</label>
+            <select id="origin" name="origin" required>
+                <option value="" disabled selected>Select Origin</option>
+                {{#stations}}
+                <option value="{{id}}">{{stationname}}</option>
+                {{/stations}}
+            </select>
+        </div>
+        <div class="select-container">
+
+            <label for="destination">Destination:</label>
+            <select id="destination" name="destination" required>
+                <option value="" disabled selected>Select Destination</option>
+                {{#stations}}
+                <option value="{{id}}">{{stationname}}</option>
+                {{/stations}}
+            </select>
+        </div>
           <label for="routeName">Route Name :</label>
           <input type="text" id="routeName" name="routeName" class="form-control" />
           <br />
@@ -90,8 +102,8 @@ body {
 
       // Add event listener for Save Route button
 $("#btnSaveRoute").on("click", function() {
-  var fromStationId = $("#fromStation").val();
-  var toStationId = $("#toStation").val();
+  var fromStationId = $("#origin").val();
+  var toStationId = $("#destination").val();
   var routeName = $("#routeName").val();
     console.log(fromStationId)
     console.log( $("#fromStation").val())
