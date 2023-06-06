@@ -72,8 +72,8 @@ body {
           {{#routes}}
           <tr>
             <td>{{id}}</td>
-            <td>{{s1Name}}</td>
             <td>{{s2Name}}</td>
+            <td>{{s1Name}}</td>
             <td>
               <span class="route-name">{{routename}}</span>
               <input type="text" class="form-control route-name-input" value="{{routename}}" style="display: none;">
