@@ -126,7 +126,7 @@ async function alterPosition(affectedStations) {
     } else if (Object.keys(endRoute1).length !== 0) {
       await db("se_project.stations").where("id", id).update({ stationposition: 'end' });
     } else {
-      await db("se_project.stations").where("id", id).update({ stationposition: '' });
+      await db("se_project.stations").where("id", id).update({ stationposition: '', stationstatus:'new' });
     }
   }
 }
@@ -858,6 +858,32 @@ app.get('/api/v1/zones',async (req,res) => {
 
 
  });
+ // reset pawword
+ app.put('/api/v1/password/reset', async(req, res) => {
+  try {
+    const userr = await getUser(req);
+    const userId = userr.userid;
+    const { newPassword, OldPassword } = req.body;
+
+    // Find the user in the database by their id from the session
+    const [user] = await db('se_project.users')
+      .where({ id: userId })
+      .select('password');
+
+    if (user.password !==OldPassword) {
+      return res.status(300).json({ message: 'Incorrect old Password' });
+    } else {
+      await db('se_project.users')
+        .where({ id: userId })
+        .update({ password: newPassword });
+
+      return res.status(200).json({ message: 'Password reset successfully' });
+    }
+  } catch (error) {
+    console.error(error.message);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+});
 //-----------------------------------------------LOFFY-------------------------------------------------------------------
 app.get("/api/v1/requests_refunds", auth, authorization, async (req, res) => {
   try {

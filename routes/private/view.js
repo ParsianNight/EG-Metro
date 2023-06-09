@@ -25,12 +25,14 @@ module.exports = function(app) {
   // Register HTTP endpoint to render /users page
   app.get('/dashboard', async function(req, res) {
     const user = await getUser(req);
-    return res.render('dashboard', user);
+    console.log(user)
+    return res.render('dashboard', {...user});
   });
+ 
 
   // Register HTTP endpoint to render /users page
   app.get('/users', async function(req, res) {
-    const users = await db.select('*').from('se_project.users');
+    const users = await db.select('*').from('se_project.users')
     return res.render('users', { users });
   });
 
@@ -43,13 +45,9 @@ module.exports = function(app) {
 
   app.get('/manage/routes', async function(req, res) {
     const user = await getUser(req);
-    const routes = await db.select('se_project.routes.id','routename','s1.stationname as s1Name','s2.stationname as s2Name')
-    .from('se_project.routes')
-    .innerJoin('se_project.stations as s1','s1.id','se_project.routes.tostationid')
-    .innerJoin('se_project.stations as s2','s2.id','se_project.routes.fromstationid');
-
+    const routes = await db.select('*').from('se_project.routes');
     return res.render('routesManageing', { ...user, routes });
-  }); 
+  });
   app.get("/manage/stations/create" ,async(req,res)=>{
   const user = await getUser(req);
 
@@ -113,6 +111,14 @@ app.get("/manage/routes/create" ,async(req,res)=>{
     console.log(stations)
     res.render("simulate_ride",{stations})
 });
+
+
+app.get("/resetPassword", async function (req, res) {
+  return res.render("resetPassword");
+});
+
+
+
 //-----------------------------------------loffy----------------------------------
 app.get('/requestedrefunds', async function(req, res) {
   const user = await getUser(req);
