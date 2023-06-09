@@ -119,7 +119,7 @@ async function alterPosition(affectedStations) {
     var startRoute1 = await db.select('*').from("se_project.routes").where("fromstationid", id);
     var endRoute1 = await db.select('*').from("se_project.routes").where("tostationid", id);
     
-    if (Object.keys(startRoute1).length !== 0 && Object.keys(endRoute1).length !== 0) {
+    if (Object.keys(startRoute1).length > 1 && Object.keys(endRoute1).length > 1) {
       await db("se_project.stations").where("id", id).update({ stationposition: 'middle' });
     } else if (Object.keys(startRoute1).length !== 0) {
       await db("se_project.stations").where("id", id).update({ stationposition: 'start' });
