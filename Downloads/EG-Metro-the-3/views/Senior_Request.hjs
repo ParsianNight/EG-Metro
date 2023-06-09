@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dashboard - Metro Station</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+    <title>Senior Request</title>
+    <style>
+     body,h1 {
+      font-family: "Raleway", sans-serif;
+    }
+    body, html {
+      height: 100%;
+    }
+    .profile p {
+  font-size: 24px;
+  margin-bottom: 10px;
+  color: #ffffff; /* lighter color for tags */
+}
+.profile span {
+  font-size: 24px;
+  margin-bottom: 10px;
+  color: #999797; /* darker color for data */
+}
+    .bgimg {
+     
+      min-height: 100%;
+      background-position: center;
+      background-size: cover;
+      
+    }
+    body {
+  font-family: "Raleway", sans-serif;
+  height: 100%;
+  background-image: url('images/Wallpaper5.jpg');
+  background-position: center;
+  background-size: cover;
+  backdrop-filter: blur(8px);
+}
+    .w3-display-middle {
+      background-size: cover;
+      background-position: center;
+      backdrop-filter: blur(2px);
+    }
+    .logo {
+      width: 100px;
+    }
+    .logo-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      padding: 10px;
+    }
+    nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  color: #fff;
+  padding: 20px;
+  line-height: 1.5;
+  backdrop-filter: blur(10px);
+  z-index: 999; /* Add z-index value */
+  font-size: 20px;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+    .nav-links {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .nav-links li:last-child {
+      float: right;
+    }
+    .nav-links li {
+      display: inline-block;
+      margin-right: 20px;
+    }
+    .nav-links li a {
+      color: #fff;
+      text-decoration: none;
+    }
+    .cta-btn {
+      background-color: #fff;
+      color: #333;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      font-size: 16px;
+      margin-top: 20px;
+      transition: background-color 0.3s ease;
+    }
+    .cta-btn:hover {
+      background-color: #333;
+      color: #fff;
+      cursor: pointer;
+    }
+    /* Additional styles for the dashboard */
+    .dashboard {
+      padding: 100px 20px;
+      text-align: center;
+    }
+    .dashboard h2 {
+      font-size: 48px;
+      margin-bottom: 40px;
+    }
+    .dashboard p {
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+    /* Styles for the profile section */
+    .profile {
+      margin-top: 50px;
+      text-align: left;
+    }
+    .profile h3 {
+      font-size: 36px;
+      margin-bottom: 20px;
+    }
+    .profile p {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+     .dropdown {
+    position: relative;
+    display: inline-block;
+  }
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    z-index: 1;
+    background-color: rgba(0, 0, 0, 0.8);
+    min-width: 200px;
+  }
+  @media screen and (max-width: 768px) {
+  .dropdown-content {
+    min-width: 100%; /* set width to 100% */
+    left: 0; /* align menu to the left */
+    box-shadow: none; /* remove box shadow */
+  }
+}
+  .dropdown:hover .dropdown-content {
+    display: block;
+  }
+  .dropbtn {
+    color: white;
+    text-decoration: none;
+  }
+  .dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+  }
+  .dropdown-content a:hover {
+    background-color: #b3b3b3;
+  }
+      .container {
+        max-width: 500px;
+        margin: 0 auto;
+        background-color: #fff;
+        border-radius: 5px;
+        padding: 110px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        text-align: center;
+      }
+      form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      label {
+        margin-bottom: 10px;
+      }
+      input {
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+      button {
+        padding: 10px 20px;
+        background-color: #4caf50;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #45a049;
+      }
+    </style>
+  
+
+
+    <script>
+      // Function to handle the form submission
+      function submitSeniorRequest() {
+        const nationalId = document.getElementById("nationalId").value;
+
+        fetch("/api/v1/senior/request", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ nationalId: nationalId }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            const messageContainer = document.getElementById("message");
+            if (data.error) {
+              messageContainer.textContent = `Error: ${data.error}`;
+            } else if (data.message) {
+              messageContainer.textContent = data.message;
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
+    </script>
+    <nav>
+  <ul class="nav-links">
+    <li><a href="/">Home</a></li>
+    <li><a href="AboutUs">About Us</a></li> 
+    <li class="dropdown">
+      <a href="#" class="dropbtn">Services</a>
+      <div class="dropdown-content">
+        <a href="/subscriptions">Subscriptions</a>
+        <a href="/tickets">Tickets</a>
+        <a href="/prices">Prices</a>
+        <a href="/rides/simulate">Rides</a>
+        <a href="/requests/refund">Request Refund</a>
+        <a href="/requests/senior">Request Senior</a>
+        <a href="/myrequsets">My Requsets</a>
+      </div>
+    </li>
+    
+   <li class="dropdown">
+  <a href="#" class="dropbtn"><i class="fa fa-user"></i> {{firstname}} {{lastname}}</a>
+  <div class="dropdown-content">
+    <a href="/dashboard">Settings</a>
+    <a href="/resetPassword">Reset Password</a>
+    <a href="/logout">Logout</a>
+  </div>
+</li>
+    </ul>
+
+</nav>
+
+  </head>
+  <body>
+    <div class="container">
+      <h1>Senior Request</h1>
+      <form onsubmit="event.preventDefault(); submitSeniorRequest();">
+        <label for="nationalId">National ID:</label>
+        <input type="text" id="nationalId" name="nationalId" required>
+        <button type="submit">Submit Request</button>
+      </form>
+      <p id="message"></p>
+    </div>
+  </body>
+</html>

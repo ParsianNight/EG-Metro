@@ -1,0 +1,375 @@
+ <!DOCTYPE html>
+<html>
+  <head>
+    <title>EG-Metro</title>
+    <link rel='stylesheet' href='/styles/bootstrap.min.css' />
+    <link rel='stylesheet' href='/styles/style.css' />
+    <script src="/js/jquery-2.2.0.min.js" type="text/javascript"></script>
+    <script src="/js/bootstrap.min.js" type="text/javascript"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+  </head>
+  <title>Refund Requests</title>
+  <style>
+   
+    h1 {
+      text-align: center;
+      margin-top: 20px;
+      color: #bbb;
+    }
+    table {
+      margin: 20px auto;
+      border-collapse: collapse;
+      background-color: #333;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    th, td {
+      padding: 10px;
+      border: 1px solid #555;
+      color: #eee;
+    }
+    th {
+      background-color: #3a3a3a;
+      color: #fff;
+    }
+    form {
+      margin: 20px auto;
+      width: 50%;
+    }
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: bold;
+      color: #eee;
+    }
+    select {
+      padding: 5px;
+      border: 1px solid #555;
+      border-radius: 3px;
+      width: 100%;
+      margin-bottom: 10px;
+      box-sizing: border-box;
+      background-color: #222;
+      color: #eee;
+    }
+    button[type="submit"] {
+      padding: 10px 20px;
+      background-color: #3a3a3a;
+      color: white;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+    button[type="submit"]:hover {
+      background-color: #cbcbcb;
+    }
+    .error-message {
+      color: #ff6f6f;
+      margin-top: 10px;
+      text-align: center;
+    }
+    .profile p {
+  font-size: 24px;
+  margin-bottom: 10px;
+  color: #ffffff; /* lighter color for tags */
+}
+.profile span {
+  font-size: 24px;
+  margin-bottom: 10px;
+  color: #999797; /* darker color for data */
+}
+    .bgimg {
+     
+      min-height: 100%;
+      background-position: center;
+      background-size: cover;
+      
+    }
+    {{!-- body {
+  font-family: "Raleway", sans-serif;
+  height: 100%;
+  background-image: url('images/Wallpaper5.jpg');
+  background-position: center;
+  background-size: cover;
+  backdrop-filter: blur(8px);
+} --}}
+    body {
+  font-family: "Raleway", sans-serif;
+  background-image: url('images/Wallpaper5.jpg');
+  background-position: center;
+  background-size: cover;
+  backdrop-filter: blur(8px);
+   padding: 50px;
+    margin-top: 40px
+}
+ nav {
+  position: fixed;
+  top: -40px;
+  left: 0;
+  
+  width: 100%;
+  color: #fff;
+  padding: 20px;
+  line-height: 1.5;
+  backdrop-filter: blur(10px);
+  z-index: 9999; /* Add z-index value */
+  font-size: 20px;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+    .nav-links {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .nav-links li:last-child {
+      float: right;
+    }
+    .nav-links li {
+      display: inline-block;
+      margin-right: 20px;
+    }
+    .nav-links li a {
+      color: #fff;
+      text-decoration: none;
+    }
+    .cta-btn {
+      background-color: #fff;
+      color: #333;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      font-size: 16px;
+      margin-top: 20px;
+      transition: background-color 0.3s ease;
+    }
+    .cta-btn:hover {
+      background-color: #333;
+      color: #fff;
+      cursor: pointer;
+    }
+    /* Additional styles for the dashboard */
+    .dashboard {
+      padding: 100px 20px;
+      text-align: center;
+    }
+    .dashboard h2 {
+      font-size: 48px;
+      margin-bottom: 40px;
+    }
+    .dashboard p {
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+    /* Styles for the profile section */
+    .profile {
+      margin-top: 50px;
+      text-align: left;
+    }
+    .profile h3 {
+      font-size: 36px;
+      margin-bottom: 20px;
+    }
+    .profile p {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+     .dropdown {
+    position: relative;
+    display: inline-block;
+  }
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    z-index: 1;
+    background-color: rgba(0, 0, 0, 0.8);
+    min-width: 200px;
+  }
+  @media screen and (max-width: 768px) {
+  .dropdown-content {
+    min-width: 100%; /* set width to 100% */
+    left: 0; /* align menu to the left */
+    box-shadow: none; /* remove box shadow */
+  }
+}
+  .dropdown:hover .dropdown-content {
+    display: block;
+  }
+  .dropbtn {
+    color: white;
+    text-decoration: none;
+  }
+  .dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+  }
+  .dropdown-content a:hover {
+    background-color: #b3b3b3;
+  }
+
+
+       body,h1 {
+      font-family: "Raleway", sans-serif;
+    }
+    body, html {
+      height: 100%;
+    }
+    .bgimg {
+     
+      min-height: 100%;
+      background-position: center;
+      background-size: cover;
+      
+    }
+
+  </style>
+ 
+</head>
+<body>
+<nav>
+ <ul class="nav-links">
+    <li><a href="/">Home</a>
+    <li><a href="AboutUs">About Us</a>
+    <li class="dropdown">
+      <a href="#" class="dropbtn">Services
+      <div class="dropdown-content">
+         <a href="/manage/stations">Manage Stations</a>
+         <a href="/manage/routes">Manage Route</a>
+         <a href="/requestedrefunds">Manage Refunds</a>
+         <a href="/senior_req">Manage Seniors</a>
+         <a href="/updatezones">Manage Zones</a>
+      </div>
+    </li>
+    <li class="dropdown">
+  <a href="#" class="dropbtn"><i class="fa fa-user"></i> {{firstname}} {{lastname}}</a>
+  <div class="dropdown-content">
+    <a href="/dashboard">Settings</a>
+    <a href="/resetPassword">Reset Password</a>
+    <a href="/logout">Logout</a>
+  </div>
+</li>
+ </ul>
+</nav>
+
+
+
+
+
+
+  <h1>Refund Requests</h1>
+
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>User ID</th>
+        <th>Amount</th>
+        <th>Status</th>
+        <th>Ride Status</th>
+      </tr>
+    </thead>
+    <tbody id="refund-table">
+    </tbody>
+  </table>
+
+  <form id="update-form">
+    <label for="refund-id">Refund Request ID:</label>
+    <select id="refund-id" required>
+      <option value="">Select a refund ID</option>
+    </select>
+    <br>
+    <label for="refund-status">New Status:</label>
+    <select id="refund-status" required>
+      <option value="">Select a status</option>
+      <option value="Accepted">Accepted</option>
+      <option value="Rejected">Rejected</option>
+    </select>
+    <br>
+    <button type="submit">Update Status</button>
+    <p id="error-message" class="error-message"></p>
+  </form>
+
+  <script>
+    // Fetch refund requests from server
+    function getRefundRequests() {
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', '/api/v1/requests_refunds', true);
+      xhr.setRequestHeader('Authorization', '<your-authentication-token>');
+
+      xhr.onload = function() {
+        if (xhr.status >= 200 && xhr.status < 400) {
+          const data = JSON.parse(xhr.responseText);
+          const refundTable = document.getElementById('refund-table');
+          refundTable.innerHTML = '';
+          const refundIdSelect = document.getElementById('refund-id');
+          refundIdSelect.innerHTML = '<option value="">Select a refund ID</option>'; // Clear existing options
+
+          for (const refundReq of data) {
+            const row = refundTable.insertRow();
+            row.insertCell().textContent = refundReq.id;
+            row.insertCell().textContent = refundReq.userid;
+            row.insertCell().textContent = refundReq.refundamount;
+            row.insertCell().textContent = refundReq.status;
+            row.insertCell().textContent = refundReq.ride_status;
+
+            // Add refund ID to dropdown list
+            const option = document.createElement('option');
+            option.value = refundReq.id;
+            option.textContent = `Refund ID ${refundReq.id}`;
+            refundIdSelect.appendChild(option);
+          }
+        } else {
+          console.error('Error fetching refund requests');
+        }
+      };
+
+      xhr.onerror = function() {
+        console.error('Error fetching refund requests');
+      };
+
+      xhr.send();
+    }
+
+    // Handle form submission
+    const form = document.getElementById('update-form');
+    const errorMessage = document.getElementById('error-message');
+    form.addEventListener('submit', function(event) {
+      event.preventDefault();
+     // Get selected refund ID and status
+      const refundId = document.getElementById('refund-id').value;
+      const refundStatus = document.getElementById('refund-status').value;
+
+      // Send PUT request to update refund request status
+      const xhr = new XMLHttpRequest();
+      xhr.open('PUT', `/api/v1/requests/refunds/${refundId}`, true);
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.setRequestHeader('Authorization', '<your-authentication-token>');
+
+      xhr.onload = function() {
+        if (xhr.status >= 200 && xhr.status < 400) {
+          // Display success message and update table
+          alert('Refund request status updated successfully');
+          getRefundRequests();
+        } else {
+          // Display error message
+          errorMessage.textContent = 'Error updating refund request status';
+        }
+      };
+
+      xhr.onerror = function() {
+        // Display error message
+        errorMessage.textContent = 'Error updating refund request status';
+      };
+
+      xhr.send(JSON.stringify({ status: refundStatus }));
+    });
+
+    // Call function to fetch refund requests on page load
+    getRefundRequests();
+  </script>
+</body>
+</html>
