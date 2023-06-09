@@ -150,6 +150,7 @@ th {
         <li><a href="/prices">Prices</a></li>
         <li><a href="/rides/simulate">Rides</a></li>
         <li><a href="/requests/refund">Request Refund</a></li>
+                <li><a href="/myrequsets">My Requssets</a></li>
         <li><a href="/requests/senior">Request Senior</a></li>
         <li><a href="/">Logout</a></li>
     </ul>
@@ -159,8 +160,7 @@ th {
 <body>
   <h1>Subscription Payment</h1>
   <form id="subscriptionForm">
-    <label for="purchasedId">Purchase ID:</label>
-    <input type="text" id="purchasedId" name="purchasedId" required>
+   
 
 <label for="creditCardNumber">Credit Card Number:</label>
 <input type="text" id="creditCardNumber" name="creditCardNumber" required>
@@ -206,7 +206,6 @@ th {
 
       const form = event.target;
       const data = {
-        purchasedId: form.elements["purchasedId"].value,
         creditCardNumber: form.elements["creditCardNumber"].value,
         holderName: form.elements["holderName"].value,
         payedAmount: form.elements["payedAmount"].value,

@@ -298,8 +298,8 @@ module.exports = function (app) {
 // payment FOR sub
 
 app.post("/api/v1/payment/subscription", auth , async function (req, res) {
-  const {purchasedId,creditCardNumber,holderName,payedAmount,subType,zoneId }= req.body;
-  console.log(purchasedId,creditCardNumber,holderName,payedAmount,subType,zoneId );
+  const {creditCardNumber,holderName,payedAmount,subType,zoneId }= req.body;
+  console.log(creditCardNumber,holderName,payedAmount,subType,zoneId );
 
   try {
 
@@ -308,13 +308,15 @@ app.post("/api/v1/payment/subscription", auth , async function (req, res) {
     const user = await getUser(req);
     const user_id=user.userid;
     const sub = await db.select("*").from("se_project.subsription").where("userid",user_id)
+    const subid = await db.select("id").from("se_project.subsription").where("userid",user_id).then((rows) => rows.map((row) => row.id));
+
     if(sub.length==0){
     
     const tran={
      amount:payedAmount ,
      userid:user_id ,
      purchase_type:"subsription",
-     purchasediid:purchasedId
+     purchasediid:subid[0]
    };
     n =0;
    if(subType=="annual")
@@ -336,10 +338,12 @@ app.post("/api/v1/payment/subscription", auth , async function (req, res) {
 
     await db("se_project.subsription").insert(s2);
   
+    return res.status(201).json({message: " subsription bought"}) ;     
+
 
  }
  else
-   return res.status(400).json({error: "you  have a subsription "}) ;     
+   return res.status(400).json({error: "you already have a subsription "}) ;     
    } catch (e) {
      console.log(e.message);
 
@@ -405,7 +409,7 @@ app.post("/api/v1/payment/subscription", auth , async function (req, res) {
     const tran={
       amount:payedAmount ,
       userid:user_id ,
-      purchasediid:t_id,
+      purchasediid:t_id[0],
       purchase_type:s,
 
     };
