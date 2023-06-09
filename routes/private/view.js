@@ -1,5 +1,6 @@
 const db = require('../../connectors/db');
 const roles = require('../../constants/roles');
+const authorization = require('../../middleware/authorization');
 const { getSessionToken } = require('../../utils/session');
 // TODO -> create a navbar for admins and one for users
 const getUser = async function(req) {
@@ -37,24 +38,24 @@ module.exports = function(app) {
   });
 
   // Register HTTP endpoint to render routesManageing page
-  app.get('/manage/stations', async function(req, res) {
+  app.get('/manage/stations',authorization, async function(req, res) {
     const user = await getUser(req);
     const stations = await db.select('*').from('se_project.stations');
     return res.render('stationsManageing', { ...user, stations });
   });
 
-  app.get('/manage/routes', async function(req, res) {
+  app.get('/manage/routes',authorization, async function(req, res) {
     const user = await getUser(req);
     const routes = await db.select('*').from('se_project.routes');
     return res.render('routesManageing', { ...user, routes });
   });
-  app.get("/manage/stations/create" ,async(req,res)=>{
+  app.get("/manage/stations/create" ,authorization, async(req,res)=>{
   const user = await getUser(req);
 
   res.render("createStation",{...user})
 });
 
-app.get("/manage/routes/create" ,async(req,res)=>{
+app.get("/manage/routes/create" ,authorization, async(req,res)=>{
   const user = await getUser(req);
 
   res.render("createRoute",{...user})
@@ -81,14 +82,22 @@ app.get("/manage/routes/create" ,async(req,res)=>{
     const stations = await db.select('*').from('se_project.stations')
     return res.render('pay_by_subscription', { ...user,stations });
   });
+
   app.get('/subscriptions', async function(req, res) {
     const user = await getUser(req);
    // const zones=await db.select("*").from("se_project.zones") 
     return res.render('subscription', { ...user });
   });
-  app.get("/subscriptions", async (req, res) => {
-    return res.render("GetZones");
+
+  app.get('/subscriptions/show', async function(req, res) {
+    const user = await getUser(req);
+    const subscriptions =await db.select("*").from("se_project.subsription").where("userid", user.userid);
+    return res.render('showsubs', { ...user , subscriptions });
   });
+
+
+
+
   //------------------------------------------------------------------------------------------------------------
   
   app.get("/requests/refund" , async (req,res) =>{
@@ -96,16 +105,19 @@ app.get("/manage/routes/create" ,async(req,res)=>{
     const tickets = await db.select('*').from('se_project.tickets').where("userid", user.userid);
     return res.render('refund_requests' ,  { ...user, tickets });
   });
+
   app.get("/myrequsets",async(req,res)=>{
     const user = await getUser(req);
     const requests = await db.select('*').from('se_project.refund_requests').where("userid", user.userid);
     console.log(requests)
     return res.render('myrequsets' ,  { ...user, requests });
 });
+
   app.get("/requests/senior", async (req, res) => {
     const user = await getUser(req);
     res.render("Senior_Request");
   });
+
   app.get("/rides/simulate" ,async(req,res)=>{
     const stations = await db.select('stationname').from('se_project.stations').then((rows) => rows.map((row) => row.stationname));
     console.log(stations)
@@ -125,14 +137,24 @@ app.get('/requestedrefunds', async function(req, res) {
   const stations = await db.select('*').from('se_project.stations');
   return res.render('requests_refunds');
 });
-app.get('/updatezones', async function(req, res) {
+app.get('/updatezones',authorization, async function(req, res) {
   const user = await getUser(req);
   const stations = await db.select('*').from('se_project.stations');
   return res.render('updatezones');
 });
-app.get('/senior_req', async function(req, res) {
+app.get('/senior_req',authorization, async function(req, res) {
   return res.render('S_req');
 });
+
+app.get('/logout', async function(req,res) {
+  req.logout();
+
+  // destroy session data
+  req.session = null;
+
+  // redirect to homepage
+  res.redirect('/');
+})
   
 
 };  

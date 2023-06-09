@@ -999,4 +999,3 @@ app.put("/api/v1/zones/:id", auth, authorization, async (req, res) => {
   }
 });
 };
-
