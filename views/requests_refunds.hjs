@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Refund Requests</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #222;
+      color: #eee;
+    }
+    h1 {
+      text-align: center;
+      margin-top: 20px;
+      color: #bbb;
+    }
+    table {
+      margin: 20px auto;
+      border-collapse: collapse;
+      background-color: #333;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    th, td {
+      padding: 10px;
+      border: 1px solid #555;
+      color: #eee;
+    }
+    th {
+      background-color: #0077c2;
+      color: #fff;
+    }
+    form {
+      margin: 20px auto;
+      width: 50%;
+    }
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: bold;
+      color: #eee;
+    }
+    select {
+      padding: 5px;
+      border: 1px solid #555;
+      border-radius: 3px;
+      width: 100%;
+      margin-bottom: 10px;
+      box-sizing: border-box;
+      background-color: #222;
+      color: #eee;
+    }
+    button[type="submit"] {
+      padding: 10px 20px;
+      background-color: #0077c2;
+      color: white;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+    button[type="submit"]:hover {
+      background-color: #005b8e;
+    }
+    .error-message {
+      color: #ff6f6f;
+      margin-top: 10px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <h1>Refund Requests</h1>
+
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>User ID</th>
+        <th>Amount</th>
+        <th>Status</th>
+        <th>Ride Status</th>
+      </tr>
+    </thead>
+    <tbody id="refund-table">
+    </tbody>
+  </table>
+
+  <form id="update-form">
+    <label for="refund-id">Refund Request ID:</label>
+    <select id="refund-id" required>
+      <option value="">Select a refund ID</option>
+    </select>
+    <br>
+    <label for="refund-status">New Status:</label>
+    <select id="refund-status" required>
+      <option value="">Select a status</option>
+      <option value="Accepted">Accepted</option>
+      <option value="Rejected">Rejected</option>
+    </select>
+    <br>
+    <button type="submit">Update Status</button>
+    <p id="error-message" class="error-message"></p>
+  </form>
+
+  <script>
+    // Fetch refund requests from server
+    function getRefundRequests() {
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', '/api/v1/requests_refunds', true);
+      xhr.setRequestHeader('Authorization', '<your-authentication-token>');
+
+      xhr.onload = function() {
+        if (xhr.status >= 200 && xhr.status < 400) {
+          const data = JSON.parse(xhr.responseText);
+          const refundTable = document.getElementById('refund-table');
+          refundTable.innerHTML = '';
+          const refundIdSelect = document.getElementById('refund-id');
+          refundIdSelect.innerHTML = '<option value="">Select a refund ID</option>'; // Clear existing options
+
+          for (const refundReq of data) {
+            const row = refundTable.insertRow();
+            row.insertCell().textContent = refundReq.id;
+            row.insertCell().textContent = refundReq.userid;
+            row.insertCell().textContent = refundReq.refundamount;
+            row.insertCell().textContent = refundReq.status;
+            row.insertCell().textContent = refundReq.ride_status;
+
+            // Add refund ID to dropdown list
+            const option = document.createElement('option');
+            option.value = refundReq.id;
+            option.textContent = `Refund ID ${refundReq.id}`;
+            refundIdSelect.appendChild(option);
+          }
+        } else {
+          console.error('Error fetching refund requests');
+        }
+      };
+
+      xhr.onerror = function() {
+        console.error('Error fetching refund requests');
+      };
+
+      xhr.send();
+    }
+
+    // Handle form submission
+    const form = document.getElementById('update-form');
+    const errorMessage = document.getElementById('error-message');
+    form.addEventListener('submit', function(event) {
+      event.preventDefault();
+     // Get selected refund ID and status
+      const refundId = document.getElementById('refund-id').value;
+      const refundStatus = document.getElementById('refund-status').value;
+
+      // Send PUT request to update refund request status
+      const xhr = new XMLHttpRequest();
+      xhr.open('PUT', `/api/v1/requests/refunds/${refundId}`, true);
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.setRequestHeader('Authorization', '<your-authentication-token>');
+
+      xhr.onload = function() {
+        if (xhr.status >= 200 && xhr.status < 400) {
+          // Display success message and update table
+          alert('Refund request status updated successfully');
+          getRefundRequests();
+        } else {
+          // Display error message
+          errorMessage.textContent = 'Error updating refund request status';
+        }
+      };
+
+      xhr.onerror = function() {
+        // Display error message
+        errorMessage.textContent = 'Error updating refund request status';
+      };
+
+      xhr.send(JSON.stringify({ status: refundStatus }));
+    });
+
+    // Call function to fetch refund requests on page load
+    getRefundRequests();
+  </script>
+</body>
+</html>

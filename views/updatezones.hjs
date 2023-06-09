@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Zones</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #222;
+      color: #eee;
+    }
+    h1 {
+      text-align: center;
+      margin-top: 20px;
+      color: #bbb;
+    }
+    table {
+      margin: 20px auto;
+      border-collapse: collapse;
+      background-color: #333;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    th, td {
+      padding: 10px;
+      border: 1px solid #555;
+      color: #eee;
+    }
+    th {
+      background-color: #0077c2;
+      color: #fff;
+    }
+    td.zone-id {
+      background-color: #0077c2;
+      color: #fff;
+      font-weight: bold;
+      padding: 5px 10px;
+      border-radius: 3px;
+    }
+    form {
+      margin: 20px auto;
+      width: 50%;
+    }
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: bold;
+      color: #eee;
+    }
+    input[type="number"] {
+      padding: 5px;
+      border: 1px solid #555;
+      border-radius: 3px;
+      width: 100%;
+      margin-bottom: 10px;
+      box-sizing: border-box;
+      background-color: #222;
+      color: #eee;
+    }
+    button[type="submit"] {
+      padding: 10px 20px;
+      background-color: #0077c2;
+      color: white;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+    button[type="submit"]:hover {
+      background-color: #005b8e;
+    }
+    .error-message {
+      color: #ff6f6f;
+      margin-top: 10px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <h1>Zones</h1>
+
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Zone Type</th>
+        <th>Price</th>
+      </tr>
+    </thead>
+    <tbody id="zone-table">
+    </tbody>
+  </table>
+
+  <form id="update-form">
+    <label for="zone-id">Zone ID:</label>
+    <select id="zone-id" required>
+      <option value="">Select a zone ID</option>
+    </select>
+    <br>
+    <label for="zone-price">New Price:</label>
+    <input type="number" id="zone-price" required>
+    <br>
+    <button type="submit">Update Price</button>
+    <p id="error-message" class="error-message"></p>
+  </form>
+
+  <script>
+    // Fetch zone data from server
+    function getZones() {
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', '/api/v1/zones', true);
+      xhr.setRequestHeader('Authorization', '<your-authentication-token>');
+
+      xhr.onload = function() {
+        if (xhr.status >= 200 && xhr.status < 400) {
+          const data = JSON.parse(xhr.responseText);
+          const zoneTable = document.getElementById('zone-table');
+          const zoneSelect = document.getElementById('zone-id');
+          zoneTable.innerHTML = '';
+          zoneSelect.innerHTML = '<option value="">Select a zone ID</option>';
+
+          for (const zone of data) {
+            const row = zoneTable.insertRow();
+            const idCell = row.insertCell();
+            idCell.textContent = zone.id;
+            idCell.classList.add('zone-id');
+            row.insertCell().textContent = zone.zonetype;
+            row.insertCell().textContent = zone.price;
+
+            const option = document.createElement('option');
+            option.value = zone.id;
+            option.textContent = zone.id;
+            zoneSelect.appendChild(option);
+          }
+        } else {
+          console.error('Error fetching zone data');
+        }
+      };
+
+      xhr.onerror = function() {
+        console.error('Error fetching zone data');
+      };
+
+      xhr.send();
+    }
+
+    // Handle form submission
+    const form = document.getElementById('update-form');
+    const errorMessage = document.getElementById('error-message');
+    form.addEventListener('submit', function(event) {
+      event.preventDefault();
+      const zoneId = document.getElementById('zone-id').value;
+      const zonePrice = document.getElementById('zone-price').value;
+
+      const xhr = new XMLHttpRequest();
+      xhr.open('PUT', `/api/v1/zones/${zoneId}`, true);
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.setRequestHeader('Authorization', '<your-authentication-token>');
+
+      xhr.onload = function() {
+        if (xhr.status >= 200 && xhr.status < 400) {
+          getZones();
+          errorMessage.textContent = '';
+        } else {
+          const error = JSON.parse(xhr.responseText);
+          errorMessage.textContent = error.message;
+        }
+      };
+
+      xhr.onerror = function() {
+        errorMessage.textContent = 'Error updating zone price';
+      };
+
+      xhr.send(JSON.stringify({ price: zonePrice }));
+    });
+
+    // Load zone data on page load
+    getZones();
+  </script>
+</body>
+</html>

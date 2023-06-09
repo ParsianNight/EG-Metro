@@ -4,6 +4,20 @@ const db = require("../../connectors/db");
 const roles = require("../../constants/roles");
 const { getSessionToken } = require('../../utils/session');
 const auth = require("../../middleware/auth");
+const authorization = require("../../middleware/authorization");
+function calculateAge(id) {
+  console.log(id + "|hoHOOO");
+  const year = parseInt(id.substring(1, 3));
+  const now = new Date();
+  const currentYear = now.getFullYear();
+  let age;
+  if (id[0] === '2') {
+      age = 1900 + year;
+  } else {
+      age = 2000 + year;
+  }
+  return currentYear - age;
+}
 const session = require("../../utils/session");
 const getUser = async function (req) {
   const sessionToken = getSessionToken(req);
@@ -44,7 +58,7 @@ module.exports = function (app) {
   });
 
   // create station
-  app.post("/api/v1/station", async function (req, res) {
+  app.post("/api/v1/station",authorization, async function (req, res) {
     try {
       const newStation = {
         stationname: req.body.stationName,
@@ -61,7 +75,7 @@ module.exports = function (app) {
   });
 
   // update station
-  app.put("/api/v1/station/:id", async function (req, res) {
+  app.put("/api/v1/station/:id",authorization, async function (req, res) {
     try {
       const updateStation = {};
 
@@ -118,7 +132,7 @@ async function alterPosition(affectedStations) {
 }
 
   // delete a station
-  app.delete("/api/v1/station/:id", async function (req, res) {
+  app.delete("/api/v1/station/:id", authorization,async function (req, res) {
     var affectedStations = new Set();
 
     try {
@@ -200,7 +214,7 @@ async function alterPosition(affectedStations) {
   })
 
   // create route
-  app.post("/api/v1/route", async function (req, res) {
+  app.post("/api/v1/route",authorization, async function (req, res) {
     try {
       const newRoute = {
         fromstationid: req.body.fromStationId,
@@ -222,7 +236,7 @@ async function alterPosition(affectedStations) {
     }
   });
   // update route
-  app.put("/api/v1/route/:id", async function (req, res) {
+  app.put("/api/v1/route/:id",authorization, async function (req, res) {
     try {
       const updateRoute = {};
 
@@ -250,7 +264,7 @@ async function alterPosition(affectedStations) {
     }
   });
   // delete route
-  app.delete("/api/v1/route/:id", async function (req, res) {
+  app.delete("/api/v1/route/:id",authorization, async function (req, res) {
 
     try {
 
@@ -504,7 +518,7 @@ return res.status(200).json({ message: 'Path: '+way+' price: '+price[0] +"pounds
     // console.log("r",r); 
     await db("se_project.rides").insert(r);
     const tran={
-      amount:5 ,
+      amount:1 ,
       userid:user_id ,
       purchasediid:t_id,
       purchase_type:s,
@@ -843,4 +857,111 @@ app.get('/api/v1/zones',async (req,res) => {
 
 
  });
-}
+//-----------------------------------------------LOFFY-------------------------------------------------------------------
+app.get("/api/v1/requests_refunds", auth, authorization, async (req, res) => {
+  try {
+    const user = await getUser(req);
+    console.log(user);
+
+    const allRefundReqs = await db
+      .select("refund_requests.*", "rides.status as ride_status")
+      .from("se_project.refund_requests")
+      .leftJoin("se_project.rides", "refund_requests.ticketid", "=", "rides.ticketid")
+      .where("refund_requests.status", "pending");
+
+    return res.status(200).json(allRefundReqs);
+  } catch (err) {
+    console.error(err.message);
+  }
+});
+app.put(
+  "/api/v1/requests/refunds/:id",
+  auth,
+  authorization,
+  async (req, res) => {
+    try {
+      const user = await getUser(req);
+      const refundRequest = await db("se_project.refund_requests")
+        .where("id", req.params.id)
+        .first();
+      console.log(refundRequest.ticketid);
+      if (req.body.status === "Accepted") {
+        await db("se_project.rides")
+          .where("ticketid", refundRequest.ticketid)
+          .del();
+      }
+      const updateStatus = await db("se_project.refund_requests")
+        .where("id", req.params.id)
+        .update({
+          status: req.body.status,
+        });
+      console.log(req.params.id);
+      return res.status(200).json();
+    } catch (err) {
+      console.log(err.message);
+      return res.status(500).json({ error: "Internal server error" });
+    }
+  }
+);
+app.get("/api/v1/requests_senior",
+  auth,
+  authorization,
+  async (req, res) => {
+    try {
+      const user = await getUser(req);
+      const seniorRequests = await db('se_project.senior_requests').select('*').where("status","pending");
+      const nid = seniorRequests[0].nationalid;
+      console.log(seniorRequests[0])
+      const requestsWithAge = seniorRequests.map(request => ({ ...request, age: calculateAge(request.nationalid.toString()) }));
+                  return res.status(200).json(requestsWithAge);
+    } catch (err) { 
+      console.log(err.message);
+    }
+  })
+app.put(
+  "/api/v1/requests_senior/:id",
+  auth,
+  authorization,
+  async (req, res) => {
+    try {
+      const user = await getUser(req);
+      const { id } = req.params.id;
+      const updateSatus = await db("se_project.senior_requests")
+        .where("id", req.params.id)
+        .update({
+          status: req.body.status,
+        });
+      return res.status(200).json();
+    } catch (err) {
+      console.log(err.message);
+    }
+  }
+);
+app.get("/api/v1/zones", auth, authorization, async (req, res) => {
+  try {
+    const user = await getUser(req);
+    const allZones = await db("se_project.zones").select('*')
+    return res.status(200).json(allZones);
+  } catch (err) {
+    console.log(err.message);
+  }
+})
+app.put("/api/v1/zones/:id", auth, authorization, async (req, res) => {
+  try {
+    console.log("Hi");
+    console.log(req.body.price);
+    const user = await getUser(req);
+    const { id } = req.params;
+    const updatePrice = await db("se_project.zones")
+      .where("id", id)
+      .update({
+        price: req.body.price
+      })
+    res.status(200).send("Zone price updated successfully");
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).send("Error updating zone price");
+  }
+});
+};
+

@@ -113,7 +113,20 @@ app.get("/manage/routes/create" ,async(req,res)=>{
     console.log(stations)
     res.render("simulate_ride",{stations})
 });
-
+//-----------------------------------------loffy----------------------------------
+app.get('/requestedrefunds', async function(req, res) {
+  const user = await getUser(req);
+  const stations = await db.select('*').from('se_project.stations');
+  return res.render('requests_refunds');
+});
+app.get('/updatezones', async function(req, res) {
+  const user = await getUser(req);
+  const stations = await db.select('*').from('se_project.stations');
+  return res.render('updatezones');
+});
+app.get('/senior_req', async function(req, res) {
+  return res.render('S_req');
+});
   
 
 };  

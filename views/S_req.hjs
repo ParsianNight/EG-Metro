@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Senior Requests</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #222;
+      color: #eee;
+    }
+    h1 {
+      text-align: center;
+      margin-top: 20px;
+      color: #bbb;
+    }
+    table {
+      margin: 20px auto;
+      border-collapse: collapse;
+      background-color: #333;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    th, td {
+      padding: 10px;
+      border: 1px solid #555;
+      color: #eee;
+    }
+    th {
+      background-color: #0077c2;
+      color: #fff;
+    }
+    form {
+      margin: 20px auto;
+      width: 50%;
+    }
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: bold;
+      color: #eee;
+    }
+    select {
+      padding: 5px;
+      border: 1px solid #555;
+      border-radius: 3px;
+      width: 100%;
+      margin-bottom: 10px;
+      box-sizing: border-box;
+      background-color: #222;
+      color: #eee;
+    }
+    button[type="submit"] {
+      padding: 10px 20px;
+      background-color: #0077c2;
+      color: white;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+    button[type="submit"]:hover {
+      background-color: #005b8e;
+    }
+    .error-message {
+      color: #ff6f6f;
+      margin-top: 10px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <h1>Senior Requests</h1>
+
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>User ID</th>
+        <th>Status</th>
+        <th>Age</th>
+      </tr>
+    </thead>
+    <tbody id="senior-request-table">
+    </tbody>
+  </table>
+
+  <form id="update-form">
+    <label for="senior-request-id">Request ID:</label>
+    <select id="senior-request-id" required>
+      <option value="">Select a request ID</option>
+    </select>
+    <br>
+    <label for="senior-request-status">New Status:</label>
+    <select id="senior-request-status" required>
+      <option value="">Select a status</option>
+      <option value="Accepted">Accepted</option>
+      <option value="Rejected">Rejected</option>
+    </select>
+    <br>
+    <button type="submit">Update Status</button>
+    <p id="error-message" class="error-message"></p>
+  </form>
+
+  <script>
+    // Fetch senior requests from server
+    function getSeniorRequests() {
+      fetch('/api/v1/requests_senior', {
+        method: 'GET',
+        headers: {
+          'Authorization': '<your-authentication-token>'
+        }
+      })
+      .then(res => res.json())
+      .then(data => {
+        const seniorRequestTable = document.getElementById('senior-request-table');
+        seniorRequestTable.innerHTML = '';
+        const seniorRequestIdSelect = document.getElementById('senior-request-id');
+        seniorRequestIdSelect.innerHTML = '<option value="">Select a request ID</option>'; // Clear existing options
+
+        for (const seniorReq of data) {
+          const row = seniorRequestTable.insertRow();
+          row.insertCell().textContent = seniorReq.id;
+          row.insertCell().textContent = seniorReq.userid;
+          row.insertCell().textContent = seniorReq.status;
+          row.insertCell().textContent = seniorReq.age;
+
+          // Add request ID to dropdown list
+          const option = document.createElement('option');
+          option.value = seniorReq.id;
+          option.textContent = `Request ID ${seniorReq.id}`;
+          seniorRequestIdSelect.appendChild(option);
+        }
+      })
+      .catch(error => console.error('Error fetching senior requests:', error));
+    }
+
+    // Handle form submission
+    const form = document.getElementById('update-form');
+    const errorMessage = document.getElementById('error-message');
+
+    form.addEventListener('submit', event => {
+      event.preventDefault();
+
+      const requestId = document.getElementById('senior-request-id').value;
+      const newStatus = document.getElementById('senior-request-status').value;
+
+      // Reset error message
+      errorMessage.textContent = '';
+
+      // Update request status
+      fetch(`/api/v1/requests_senior/${requestId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': '<your-authentication-token>'
+        },
+        body: JSON.stringify({ status: newStatus })
+      })
+      .then(res => {
+        if (res.ok) {
+          // Request status updated successfully, refresh page
+          getSeniorRequests();
+        } else {
+          // Display error message
+          res.json().then(data => {
+            errorMessage.textContent = data.message;
+          });
+        }
+      })
+      .catch(error => console.error('Error updating senior request status:', error));
+    });
+
+    // Fetch senior requests on page load
+    getSeniorRequests();
+  </script>
+</body>
+</html>
