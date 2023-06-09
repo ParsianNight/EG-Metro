@@ -2,7 +2,53 @@ const { isEmpty } = require("lodash");
 const { v4 } = require("uuid");
 const db = require("../../connectors/db");
 const roles = require("../../constants/roles");
+const config = require("../../email/config")
+const emails = require("../../email/email")
 module.exports = function (app) {
+
+  app.post("/api/v1/forgetpassword", async function (req,res)  {
+    const secretKey = config.secretKey
+    const {email} = req.body
+    const payload = {
+      email: email,
+    };
+    const options = {
+      expiresIn: '1 hour',
+    }
+    const token = jwt.sign(payload,secretKey,options)
+    //console.log(token)
+    try {
+      emails.sendResetPassword(email,token)
+      res.status(200).send("Email sent successfully!")
+  
+    } catch (error) {
+      res.status(400).send("Enter a vaild token !")
+    }
+
+  })
+
+  app.post("/api/v1/forgetpassword/:token", async function (req,res) {
+    const secretKey = config.secretKey
+    const {token} = req.params 
+    const password = req.body.password
+    if(!token)
+    return res.status(400).send("Please send a vaild token")
+    if(!password)
+    return res.status(400).send("Password can't be empty ")
+    try {
+      const decoded = jwt.verify(token, secretKey);
+      console.log(1)
+    const user = await db("se_project.users")
+    .where({ "email": decoded.email })
+    .update({ password: password });
+
+    } catch (error) {
+      return res.status(400).send("Please send a vaild token")
+    }
+    return res.status(200).send("Password reset successfully!")
+  })
+
+
 app.post("/api/v1/user", async function (req, res) {
 
     // Check if user already exists in the system

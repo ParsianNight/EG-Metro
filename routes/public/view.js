@@ -26,4 +26,23 @@ module.exports = function(app) {
  app.get('/unauthorized', async function(req, res) {
     return res.render('401');
   });
+
+  app.get("/AboutUs", async function (req, res) {
+    return res.render("AboutUs");
+  });
+
+  app.get("/", async function (req, res) {
+    return res.render("landingpage");
+  });
+
+  app.get('/forgetpassword', function(req,res) {
+    return res.render('forget1')
+  })
+
+  app.get('/forgetpassword/:token', function(req, res) {
+    const token = req.params.token;
+    return res.render('forget2', { token });
+  });
+
+
 };

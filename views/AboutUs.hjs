@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Metro Station - 404 Not Found</title>
+<title>Metro Station</title>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
@@ -39,7 +39,7 @@ body {
     left: 0;
     padding: 10px;
   }
-nav {
+  nav {
     position: fixed;
     top: 0;
     left: 0;
@@ -48,31 +48,32 @@ nav {
     color: #fff;
     padding: 20px;
     line-height: 1.5;
-    background-color: rgba(0, 0, 0, 0.2);
+    background-color: rgba(0, 0, 0, 0.2); 
     color: #fff;
-}
-
-.nav-links {
+    
+    
+  }
+  
+  .nav-links {
     list-style: none;
     margin: 0;
     padding: 0;
-}
-
-.nav-links li:last-child {
+  }
+  .nav-links li:last-child {
     float: right;
-}
-
-.nav-links li {
+  }
+  
+  .nav-links li {
     display: inline-block;
     margin-right: 20px;
-}
-
-.nav-links li a {
+  }
+  
+  .nav-links li a {
     color: #fff;
     text-decoration: none;
-}
-
-.cta-btn {
+  }
+  
+  .cta-btn {
     background-color: #fff;
     color: #333;
     border: none;
@@ -81,13 +82,13 @@ nav {
     font-size: 16px;
     margin-top: 20px;
     transition: background-color 0.3s ease;
-}
-
-.cta-btn:hover {
+  }
+  
+  .cta-btn:hover {
     background-color: #333;
     color: #fff;
     cursor: pointer;
-}
+  }
  
 </style>
 </head>
@@ -99,18 +100,20 @@ nav {
   <nav>
     <ul class="nav-links">
       <li><a href="/">Home</a></li>
-      <li><a href="about">About Us</a></li>
+      <li><a href="" class="active" >About Us</a></li>
       <li><a href="login">Login</a></li>
     </ul>
   </nav>
   
   </div>
   <div class="w3-display-middle">
-    <h1 class="w3-jumbo w3-animate-top">404 Not Found</h1>
-    <h2>Oops! Page not found.</h2>
-    <p>We're sorry, but the page you are looking for does not exist.</p>
+    <h1 class="w3-jumbo w3-animate-top">Metro Station</h1>
+    <h2>About Us</h2>
+            <p>The Metro System is a modern and efficient public transportation system that serves the metropolitan area. Our goal is to provide our customers with safe, reliable, and comfortable transportation services.</p>
+            <p>We have a diverse team of professionals who are dedicated to ensuring that our customers have the best possible experience when using our system. From our drivers and maintenance staff to our administrative and customer service teams, everyone at the Metro System is committed to excellence.</p>
+            <p>Whether you're a commuter or a tourist, we invite you to ride with us and experience the convenience and affordability of the Metro System.</p>
     <hr class="w3-border-grey" style="margin:auto;width:40%">
-    <p class="w3-large w3-center">© 2023 Metro System. All Rights Reserved</p>
+    <p class="w3-large w3-center">Â© 2023 Metro System. All Rights Reserved</p>
   </div>
 </div>
 </body>

@@ -299,6 +299,7 @@ function showDivs(n) {
     <input id="submit" name="submit" type="button" value="Login" class="login-button">
   </form>
   <p class="login-register-text">Don't have an account? <a href="/register" class="login-register-link">Register</a></p>
+  <p class="login-register-text">forget your password? <a href="/forgetpassword" class="login-register-link">Reset password</a></p>
 </header>
  
 </div>

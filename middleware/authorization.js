@@ -4,10 +4,9 @@ const roles = require("../constants/roles");
 const { getSessionToken } = require("../utils/session");
 
 module.exports = async function (req, res, next) {
-    console.log('in autho');
   const sessionToken = getSessionToken(req);
   if (!sessionToken) {
-    return res.status(301).redirect("/");
+    return res.status(301).redirect("/login");
   }
 
   const userid = await db

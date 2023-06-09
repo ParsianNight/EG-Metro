@@ -147,13 +147,9 @@ app.get('/senior_req',authorization, async function(req, res) {
 });
 
 app.get('/logout', async function(req,res) {
-  req.logout();
 
-  // destroy session data
-  req.session = null;
 
-  // redirect to homepage
-  res.redirect('/');
+  res.cookie("session_token", '').redirect('/');
 })
   
 
