@@ -113,12 +113,11 @@ module.exports = function (app) {
 
 /**
  * Function for checking position of the station
- */
-async function alterPosition(affectedStations) {
+ */async function alterPosition(affectedStations) {
   for (const id of affectedStations) {
-    var startRoute1 = await db.select('*').from("se_project.routes").where("fromstationid", id);
-    var endRoute1 = await db.select('*').from("se_project.routes").where("tostationid", id);
-    
+    var startRoute1 = await db.select('').from("se_project.routes").where("fromstationid", id);
+    var endRoute1 = await db.select('').from("se_project.routes").where("tostationid", id);
+
     if (Object.keys(startRoute1).length > 1 && Object.keys(endRoute1).length > 1) {
       await db("se_project.stations").where("id", id).update({ stationposition: 'middle' });
     } else if (Object.keys(startRoute1).length !== 0) {
@@ -130,7 +129,6 @@ async function alterPosition(affectedStations) {
     }
   }
 }
-
   // delete a station
   app.delete("/api/v1/station/:id", authorization,async function (req, res) {
     var affectedStations = new Set();
@@ -216,14 +214,15 @@ async function alterPosition(affectedStations) {
   // create route
   app.post("/api/v1/route",authorization, async function (req, res) {
     try {
-      const newRoute = {
+      var newRoute = {
         fromstationid: req.body.fromStationId,
         tostationid: req.body.toStationId,
         routename: req.body.routeName
       };
       console.log(newRoute)
-      const route = await db("se_project.routes").insert(newRoute).returning("*");
-      newRoute = {
+      var route = await db("se_project.routes").insert(newRoute).returning("*");
+
+       newRoute = {
         fromstationid: req.body.toStationId,
         tostationid: req.body.fromStationId,
         routename: req.body.routeName
