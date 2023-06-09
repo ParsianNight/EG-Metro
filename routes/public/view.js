@@ -13,5 +13,7 @@ module.exports = function(app) {
     const stations = await db.select('*').from('se_project.stations');
     return res.render('register', { stations });
   });
-
+  app.get('/unauthorized', async function(req, res) {
+    return res.render('401');
+  });
 };

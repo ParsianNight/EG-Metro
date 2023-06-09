@@ -42,14 +42,13 @@
 body {
         margin-top: 40px; /* Adjust the margin-top value according to your needs */
       }
-</style>
-<div class="navbar-container">
+</style><div class="navbar-container">
     <ul class="navbar">
         <li><a href="/manage/stations">Manage Stations</a></li>
         <li><a class="active" href="/manage/routes">Manage Route</a></li>
-        <li><a href="/manage/requests/refunds">Manage Refunds</a></li>
-        <li><a href="/manage/requests/seniors">Manage Seniors</a></li>
-        <li><a href="/manage/zones">Manage Zones</a></li>
+        <li><a href="/requestedrefunds">Manage Refunds</a></li>
+        <li><a href="/senior_req">Manage Seniors</a></li>
+        <li><a href="/updatezones">Manage Zones</a></li>
         <li><a href="/">Logout</a></li>
     </ul>
 </div>

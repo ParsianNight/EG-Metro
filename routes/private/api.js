@@ -226,7 +226,8 @@ async function alterPosition(affectedStations) {
 
       var routeStation = await db("se_project.stationroutes").insert({stationid: req.body.fromStationId,routeid: route[0].id}).returning("");
       routeStation = await db("se_project.stationroutes").insert({stationid: req.body.toStationId,routeid: route[0].id}).returning("");
-
+      var station = await db("se_project.stations").where("id", req.body.fromStationId).update({stationstatus: "old"});
+      station = await db("se_project.stations").where("id", req.body.toStationId).update({stationstatus: "old"});
       await alterPosition(new Set([req.body.toStationId,req.body.fromStationId]))
 
       res.status(201).json(route);
