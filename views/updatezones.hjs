@@ -108,6 +108,16 @@
     body {
         margin-top: 40px; /* Adjust the margin-top value according to your needs */
       }
+      select {
+      padding: 5px;
+      border: 1px solid #555;
+      border-radius: 3px;
+      width: 100%;
+      margin-bottom: 10px;
+      box-sizing: border-box;
+      background-color: #222;
+      color: #eee;
+    }
   </style>
   
 <div class="navbar-container">
