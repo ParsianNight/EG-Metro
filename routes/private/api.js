@@ -223,7 +223,12 @@ async function alterPosition(affectedStations) {
       };
       console.log(newRoute)
       const route = await db("se_project.routes").insert(newRoute).returning("*");
-
+      newRoute = {
+        fromstationid: req.body.toStationId,
+        tostationid: req.body.fromStationId,
+        routename: req.body.routeName
+      };
+       route = await db("se_project.routes").insert(newRoute).returning("*");
       var routeStation = await db("se_project.stationroutes").insert({stationid: req.body.fromStationId,routeid: route[0].id}).returning("");
       routeStation = await db("se_project.stationroutes").insert({stationid: req.body.toStationId,routeid: route[0].id}).returning("");
       var station = await db("se_project.stations").where("id", req.body.fromStationId).update({stationstatus: "old"});
