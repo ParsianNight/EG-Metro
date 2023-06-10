@@ -169,30 +169,31 @@
 </style>
 
   <body>
-    <nav>
+<nav>
  <ul class="nav-links">
-    <li><a href="/">Home</a></li>
-    <li><a href="AboutUs">About Us</a></li> 
+    <li><a href="/">Home</a>
+    <li><a href="/AboutUs">About Us</a>
     <li class="dropdown">
-      <a href="#" class="dropbtn">Services</a>
+      <a href="#" class="dropbtn">Services
       <div class="dropdown-content">
          <a href="/manage/stations">Manage Stations</a>
          <a href="/manage/routes">Manage Route</a>
-         <a href="/manage/requests/refunds">Manage Refunds</a>
-         <a href="/manage/requests/seniors">Manage Seniors</a>
-         <a href="/manage/zones">Manage Zones</a>
+         <a href="/requestedrefunds">Manage Refunds</a>
+         <a href="/senior_req">Manage Seniors</a>
+         <a href="/updatezones">Manage Zones</a>
       </div>
     </li>
     <li class="dropdown">
   <a href="#" class="dropbtn"><i class="fa fa-user"></i> {{firstname}} {{lastname}}</a>
   <div class="dropdown-content">
-    <a href="dashboard">Settings</a>
-    <a href="resetPassword">Reset Password</a>
+    <a href="/dashboard">Settings</a>
+    <a href="/resetPassword">Reset Password</a>
     <a href="/logout">Logout</a>
   </div>
 </li>
  </ul>
 </nav>
+
 
 
 

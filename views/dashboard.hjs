@@ -180,6 +180,7 @@
         <a href="/rides/simulate">Rides</a>
         <a href="/requests/refund">Request Refund</a>
         <a href="/requests/senior">Request Senior</a>
+        <a href="/myrequsets">My Requsets</a>
       </div>
     </li>
     

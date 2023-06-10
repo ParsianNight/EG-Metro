@@ -60,6 +60,7 @@ app.get("/manage/routes/create" ,authorization, async(req,res)=>{
 
   res.render("createRoute",{...user})
 });
+
   app.get('/tickets', async function(req, res) {
     const user = await getUser(req);
     return res.render('tickets', { ...user });
@@ -115,18 +116,20 @@ app.get("/manage/routes/create" ,authorization, async(req,res)=>{
 
   app.get("/requests/senior", async (req, res) => {
     const user = await getUser(req);
-    res.render("Senior_Request");
+    res.render("Senior_Request",{...user});
   });
 
   app.get("/rides/simulate" ,async(req,res)=>{
     const stations = await db.select('stationname').from('se_project.stations').then((rows) => rows.map((row) => row.stationname));
     console.log(stations)
-    res.render("simulate_ride",{stations})
+    const user = await getUser(req);
+    res.render("simulate_ride",{stations,...user})
 });
 
 
 app.get("/resetPassword", async function (req, res) {
-  return res.render("resetPassword");
+  const user = await getUser(req);
+  return res.render("resetPassword",{...user});
 });
 
 
@@ -135,15 +138,16 @@ app.get("/resetPassword", async function (req, res) {
 app.get('/requestedrefunds', async function(req, res) {
   const user = await getUser(req);
   const stations = await db.select('*').from('se_project.stations');
-  return res.render('requests_refunds');
+  return res.render('requests_refunds',{...user});
 });
 app.get('/updatezones',authorization, async function(req, res) {
   const user = await getUser(req);
   const stations = await db.select('*').from('se_project.stations');
-  return res.render('updatezones');
+  return res.render('updatezones',{...user});
 });
 app.get('/senior_req',authorization, async function(req, res) {
-  return res.render('S_req');
+  const user = await getUser(req);
+  return res.render('S_req',{...user});
 });
 
 app.get('/logout', async function(req,res) {
@@ -152,5 +156,6 @@ app.get('/logout', async function(req,res) {
   res.cookie("session_token", '').redirect('/');
 })
   
+
 
 };  

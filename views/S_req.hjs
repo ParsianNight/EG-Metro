@@ -3,21 +3,61 @@
 <head>
   <meta charset="UTF-8">
   <title>Senior Requests</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
   <style>
+    <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Senior Requests</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+   body, html {
+  height: 100%;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+table {
+  margin: 0 auto;
+}
+    body, h1 {
+      font-family: "Raleway", sans-serif;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 70px;
+      font-weight: 600;
+      font-size: 48px;
+      color: #333;
+    }
     body {
       font-family: Arial, sans-serif;
       background-color: #222;
       color: #eee;
     }
-    h1 {
-      text-align: center;
-      margin-top: 20px;
-      color: #bbb;
-    }
     table {
-      margin: 20px auto;
-      border-collapse: collapse;
-      background-color: #333;
+      margin: 0;
+      
+      margin-bottom: 120px;
+      margin-left: 120px;
+      margin-top: 70px;
       border-radius: 5px;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
@@ -29,9 +69,10 @@
     th {
       background-color: #0077c2;
       color: #fff;
+      margin-top: 80px auto;
     }
     form {
-      margin: 20px auto;
+      margin: 142px auto;
       width: 50%;
     }
     label {
@@ -66,55 +107,151 @@
       margin-top: 10px;
       text-align: center;
     }
-       .navbar-container {
-        background-color: #333;
-        color: #fff;
-        padding: 0px 20px;
-        font-family: Arial, sans-serif;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-    }
-
-    .navbar {
-        list-style-type: none;
-        padding: 0;
-        margin: 0;
-    }
-
-    .navbar li {
-        display: inline-block;
-        margin-right: 10px;
-    }
-
-    .navbar li a {
-        color: #fff;
-        text-decoration: none;
-        padding: 5px 10px;
-    }
-
-    .navbar li a:hover {
-        background-color: #555;
-        border-radius: 5px;
+    .bgimg {
+      min-height: 100%;
+      background-position: center;
+      background-size: cover;
     }
     body {
-        margin-top: 40px; /* Adjust the margin-top value according to your needs */
+      font-family: "Raleway", sans-serif;
+      height: 100%;
+      background-image: url('images/Wallpaper5.jpg');
+      background-position: center;
+      background-size: cover;
+      backdrop-filter: blur(8px);
+    }
+    nav {
+      position: fixed;
+      top: -10px;
+      left: 0;
+      right: 0;
+      width: 100%;
+      color: #fff;
+      padding: 20px;
+      line-height: 1.5;
+      backdrop-filter: blur(10px);
+      z-index: 999;
+      font-size: 20px;
+      background-color: rgba(0, 0, 0, 0.2);
+    }
+    .nav-links {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .nav-links li:last-child {
+      float: right;
+    }
+    .nav-links li {
+      display: inline-block;
+      margin-right: 20px;
+    }
+    .nav-links li a {
+      color: #fff;
+      text-decoration: none;
+    }
+    .cta-btn {
+      background-color: #fff;
+      color: #333;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      font-size: 16px;
+      margin-top: 20px;
+      transition: background-color 0.3s ease;
+    }
+    .cta-btn:hover {
+      background-color: #333;
+      color: #fff;
+      cursor: pointer;
+    }
+    .dashboard {
+      padding: 100px 20px;
+      text-align: center;
+    }
+    .dashboard h2 {
+      font-size: 48px;
+      margin-bottom: 40px;
+    }
+    .dashboard p {
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+    .profile {
+      margin-top: 50px;
+      text-align: left;
+    }
+    .profile h3 {
+      font-size: 36px;
+      margin-bottom: 20px;
+    }
+    .profile p {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+    .dropdown {
+      position: relative;
+      display: inline-block;
+    }
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      z-index: 1;
+      background-color: rgba(0, 0, 0, 0.8);
+      min-width: 200px;
+    }
+    @media screen and (max-width: 768px) {
+      .dropdown-content {
+        min-width: 100%;
+        left: 0;
+        box-shadow: none;
       }
+    }
+    .dropdown:hover .dropdown-content {
+      display: block;
+    }
+    .dropbtn {
+      color: white;
+      text-decoration: none;
+    }
+    .dropdown-content a {
+      color: black;
+      padding: 12px 16px;
+      text-decoration: none;
+      display: block;
+    }
+    .dropdown-content a:hover {
+      background-color: #b3b3b3;
+    }
   </style>
-  <div class="navbar-container">
-    <ul class="navbar">
-        <li><a href="/manage/stations">Manage Stations</a></li>
-        <li><a class="active" href="/manage/routes">Manage Route</a></li>
-        <li><a href="/requestedrefunds">Manage Refunds</a></li>
-        <li><a href="/senior_req">Manage Seniors</a></li>
-        <li><a href="/updatezones">Manage Zones</a></li>
-        <li><a href="/">Logout</a></li>
-    </ul>
-</div>
+
 </head>
 <body>
-  <h1>Senior Requests</h1>
+<nav>
+ <ul class="nav-links">
+    <li><a href="/">Home</a>
+    <li><a href="AboutUs">About Us</a>
+    <li class="dropdown">
+      <a href="#" class="dropbtn">Services
+      <div class="dropdown-content">
+         <a href="/manage/stations">Manage Stations</a>
+         <a href="/manage/routes">Manage Route</a>
+         <a href="/requestedrefunds">Manage Refunds</a>
+         <a href="/senior_req">Manage Seniors</a>
+         <a href="/updatezones">Manage Zones</a>
+      </div>
+    </li>
+    <li class="dropdown">
+  <a href="#" class="dropbtn"><i class="fa fa-user"></i> {{firstname}} {{lastname}}</a>
+  <div class="dropdown-content">
+    <a href="/dashboard">Settings</a>
+    <a href="/resetPassword">Reset Password</a>
+    <a href="/logout">Logout</a>
+  </div>
+</li>
+ </ul>
+</nav>
+
 
   <table>
     <thead>

@@ -139,8 +139,8 @@ function checkLogin() {
       <li><a href="">Home</a></li>
       <li><a href="AboutUs">About Us</a></li> 
       <li class="dropdown">
-     
       <li><a href="login">Login</a></li>
+
     </ul>
   </nav>
   
@@ -148,7 +148,7 @@ function checkLogin() {
   <div class="w3-display-middle">
     <h1 class="w3-jumbo w3-animate-top">Metro Station</h1>
     <hr class="w3-border-grey" style="margin:auto;width:40%">
-    <p class="w3-large w3-center">Â© 2023 Metro System. All Rights Reserved</p>
+    <p class="w3-large w3-center">© 2023 Metro System. All Rights Reserved</p>
   </div>
 </div>
 <script>

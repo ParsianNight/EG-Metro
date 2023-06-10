@@ -23,6 +23,6 @@ module.exports = async function (req, res, next) {
     if(roleId.roleid == roles.admin) {
         next();
     }else{
-        return res.status(401).redirect('/unauthorized').render('401');
+        return res.status(401).redirect('/unauthorized');
        }
 };

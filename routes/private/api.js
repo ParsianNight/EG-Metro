@@ -311,7 +311,7 @@ app.post("/api/v1/payment/subscription", auth , async function (req, res) {
     const subid = await db.select("id").from("se_project.subsription").where("userid",user_id).then((rows) => rows.map((row) => row.id));
 
     if(sub.length==0){
-    
+
     const tran={
      amount:payedAmount ,
      userid:user_id ,
@@ -337,17 +337,17 @@ app.post("/api/v1/payment/subscription", auth , async function (req, res) {
     };
 
     await db("se_project.subsription").insert(s2);
-  
-    return res.status(201).json({message: " subsription bought"}) ;     
+
+    return res.status(201).json({message: " subsription bought"}) ;
 
 
  }
  else
-   return res.status(400).json({error: "you already have a subsription "}) ;     
+   return res.status(400).json({error: "you already have a subsription "}) ;
    } catch (e) {
      console.log(e.message);
 
-     
+
    }
 
 
@@ -653,6 +653,7 @@ app.post("/api/v1/senior/request", async function (req,res)  {
     if(requests_Exists == "pending"){
       return res.status(409).json({ error: 'Already Requsted ' }); 
     }
+
       const seniorrequests = {
         status: "pending",
         userid: user.userid,
@@ -666,6 +667,7 @@ app.post("/api/v1/senior/request", async function (req,res)  {
     
     
   } catch (error) {
+    console.log(error)
     return res.status(400).json({ error: 'Failed To Submit Request' });
   }
 
