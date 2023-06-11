@@ -64,4 +64,4 @@ This project is licensed under the MIT License.
 ## Acknowledgements
 
     Thanks to the developers and contributors of the open-source libraries and frameworks used in this project.
-    Special thanks to the Metro System team for their hard work and dedication. ( Gorge, Omar, Abdullah, Ahmed)
+    Special thanks to the Metro System team for their hard work and dedication. ( George, Omar, Abdullah, Ahmed and Mohamed)
