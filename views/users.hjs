@@ -12,10 +12,15 @@
     <div>
     <nav class="navbar navbar-inverse" style="padding-left:130px;">
       <ul class="nav navbar-nav">
-        <li><a href="/dashboard">Home</a></li>
-        <li><a href="/stations_example">Stations</a></li>
-        <li class="active"><a href="/users">Users</a></li>
-        <li><a href="/users/add">Add Users</a></li>
+        <li><a href="/subscriptions">subscriptions</a></li>
+        <li><a href="/tickets">tickets</a></li>
+        <li><a href="/prices">prices</a></li>
+        <li><a href="/rides/simulate">rides</a></li>
+        <li><a href="/requests/refund">request_refund</a></li>
+                <li><a href="/myrequsets">My Requssets</a></li>
+
+        <li><a href="/requests/senior">requset_senior</a></li>
+
         <li><a href="/">Logout</a></li>  
       </ul>
   </nav>

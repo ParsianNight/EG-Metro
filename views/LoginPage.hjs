@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Login</title>
+<link rel='stylesheet' href='/styles/bootstrap.min.css' />
+<link rel='stylesheet' href='/styles/style.css' />
+<script src="https://code..6.0.min.js"></script>
+<script src="/js/bootstrap.min.js" type="text/javascript"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0" />
+ <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<script src="https://ajax.googleapis.com.5.1/jquery.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+<link rel="stylesheet" href=
+"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<style>
+body,h1 {
+  font-family: "Raleway", Arial, sans-serif
+}
+
+h1 {letter-spacing: 6px}
+
+.w3-row-padding img {
+  
+  margin-bottom: 12px
+  width: 100%;
+  height: auto;
+  }
+
+.w3-row-padding w3-grayscale {
+  position: relative;
+  margin: 0 auto;
+  max-width: 1500px;
+  width: 100%;
+  height: auto;
+  overflow: hidden;
+    }
+   section {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  z-index: -1;
+  overflow: hidden;
+}
+
+.mySlides {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.9;
+  transition: opacity 1s ease-in-out;
+}
+body {
+  background-image: url('images/slide1.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.w3-display-container:hover .mySlides {
+  opacity: 1;
+}
+
+.w3-display-bottomleft {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+}
+
+.w3-button {
+  cursor: pointer;
+}
+    
+      html, body {
+  margin: 0;
+  padding: 0;
+width: 100%;
+  height: 100%;
+      }
+   
+  
+  .login-header {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 128px 16px;
+  text-align: center;
+  z-index: 999;
+  background-size: cover;
+  background-position: center;
+  }
+
+.login-title {
+  font-size: 3em;
+  margin-bottom: 1em;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 50px;
+}
+
+.login-form input[type="email"], 
+.login-form input[type="password"] {
+  width: 100%;
+  margin-bottom: 20px;
+  box-sizing: border-box;
+}
+
+.login-label {
+  font-size: 1.5em;
+  margin-bottom: 0.5em;
+}
+
+.login-input {
+  padding: 0.5em;
+  margin-bottom: 1em;
+  border: none;
+  border-radius: 5px;
+  box-shadow: 0 0 5px rgba(0, 0, 0,0.3);
+  width: 100%;
+  max-width: 250px;
+}
+
+.login-button {
+  padding: 0.5em 1em;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  font-size: 1.2em;
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.login-button:hover {
+  background-color: #0056b3;
+}
+
+.login-register-text {
+  margin-top: 2em;
+  font-size: 1.2em;
+}
+
+.login-register-link {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.login-register-link:hover {
+  text-decoration: underline;
+}
+ nav {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    color: #fff;
+    padding: 20px;
+    line-height: 1.5;
+    backdrop-filter: blur(10px);
+
+  }
+  
+  .nav-links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-size: 20px;
+  }
+
+  
+  .nav-links li {
+    display: inline-block;
+    margin-right: 20px;
+  }
+  
+  .nav-links li a {
+    color: #fff;
+    text-decoration: none;
+  }
+ label[for="password"], label[for="email"],label[for="login-register-text"],
+.login-register-text {
+  background-color: rgba(0, 0, 0, 0.3); 
+  color: #fff;
+  padding: 5px;
+  border-radius: 5px;
+}
+
+
+</style>
+</head>
+<body>
+
+
+  <nav>
+    <ul class="nav-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="AboutUs">About Us</a></li>
+    </ul>
+  </nav>
+
+
+
+  <section class="w3-container w3-content w3-center" style="max-width:1500px;padding:0;margin-top:-16px;">
+  <div class="w3-display-container mySlides">
+    {{!-- <img src="images/slide1.jpg" style="width:100%"> --}}
+    <div class="w3-display-bottomleft w3-container w3-padding-16 w3-black">
+      
+    </div>
+  </div>
+  
+  {{!-- <div class="w3-display-container mySlides">
+    <img src="images/slide2.jpg" style="width:100%">
+    <div class="w3-display-bottomleft w3-container w3-padding-16 w3-black">
+      
+    </div>
+  </div>
+  
+  <div class="w3-display-container mySlides">
+    <img src="images/slide3.jpg" style="width:100%">
+    <div class="w3-display-bottomleft w3-container w3-padding-16 w3-black">
+      
+    </div>
+    </div>
+
+    <div class="w3-display-container mySlides">
+    <img src="images/slide4.jpg" style="width:100%">
+    <div class="w3-display-bottomleft w3-container w3-padding-16 w3-black">
+      
+      </div>
+    </div> --}}
+
+</section>
+
+
+<script>
+  var slideInterval = 3000;
+var slideIndex = 1;
+showDivs(slideIndex);
+
+function plusDivs(n) {
+  showDivs(slideIndex += n);
+  console.log("plusDivs called with n = " + n);
+}
+
+function showDivs(n) {
+  var i;
+  var x = document.getElementsByClassName("mySlides");
+  if (n > x.length) {slideIndex = 1}
+  if (n < 1) {slideIndex = x.length}
+  for (i = 0; i < x.length; i++) {
+    x[i].style.display = "none";  
+  }
+  x[slideIndex-1].style.display = "block";  
+  slideIndex++;
+  if (slideIndex > x.length) {slideIndex = 1}
+  setTimeout(showDivs, slideInterval);
+}
+</script>
+
+
+<!-- !PAGE CONTENT! -->
+
+ 
+  
+  
+   
+  
+
+  <header class="login-header">
+
+  <i class="fa fa-facebook-official w3-hover-opacity"></i>
+  <i class="fa fa-instagram w3-hover-opacity"></i>
+  <i class="fa fa-snapchat w3-hover-opacity"></i>
+  <i class="fa fa-pinterest-p w3-hover-opacity"></i>
+  <i class="fa fa-twitter w3-hover-opacity"></i>
+  <i class="fa fa-linkedin w3-hover-opacity"></i>
+
+
+<h1 class="login-title">LOGIN</h1>
+  <form class="login-form" method="post" action="/login">
+    <div class="form-group">
+      <label for="email" class="login-label">Email</label>
+      <input type="email" class="login-input" id="email" name="email" placeholder="Enter your email" required >
+    </div>
+    <div class="form-group">
+      <label for="password" class="login-label">Password</label>
+      <input type="password" class="login-input" id="password" name="password" placeholder="Enter your password" required>
+    </div>
+    <input id="submit" name="submit" type="button" value="Login" class="login-button">
+  </form>
+  <p class="login-register-text">Don't have an account? <a href="/register" class="login-register-link">Register</a></p>
+  <p class="login-register-text">forget your password? <a href="/forgetpassword" class="login-register-link">Reset password</a></p>
+</header>
+ 
+</div>
+
+<script>
+
+      $(document).ready(function(){
+        $("#submit").click(function() {
+          const email = $('#email').val();
+          const password = $('#password').val();
+
+          const data = {
+            email,
+            password,
+          };
+
+          $.ajax({
+            type: "POST",
+            url: '/api/v1/user/login',
+            data,
+            success: function(serverResponse) {
+              if(serverResponse) {
+                location.href = '/dashboard';
+              }
+            },
+            error: function(errorResponse) {
+              if(errorResponse) {
+                alert(`User login error: ${errorResponse.responseText}`);
+              }            
+            }
+          });
+        });
+      });
+    </script>
+
+</body>
+</html>
